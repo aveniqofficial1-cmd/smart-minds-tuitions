@@ -1,0 +1,426 @@
+=== PAGE 1 ===
+Software Requirements Specification
+TutorConnectPro
+Prepared for TutorConnectPro
+19 July 2026
+Introduction
+Purpose
+Scope
+Definitions, Acronyms, and Abbreviations
+Intended Audience
+Overall Description
+User Roles Overview
+Functional Requirements — Tutor Module
+FR-T1: Tutor Registration
+FR-T2: Tutor Login
+FR-T3: Tutor Dashboard — Before Tuition Assignment
+FR-T4: Tutor Dashboard — After Tuition Assignment
+FR-T5: Visibility Restriction
+Functional Requirements — Parent/Student Module
+FR-P1: Parent/Student Registration
+FR-P2: Parent/Student Login
+FR-P3: Apply for a Tuition (Requirement Posting)
+FR-P4: Demo and Tutor Assignment Workflow
+FR-P5: Parent Dashboard — After Tutor Assignment
+FR-P6: Visibility Restriction
+Functional Requirements — Tuition Center Module
+FR-C1: Tuition Center Registration
+FR-C2: Tuition Center Login
+FR-C3: Post Tutor Requirements to Admin’s Tutor Pool
+FR-C4: Tuition Center Independent Operations
+Functional Requirements — Admin Module
+FR-A1: Admin Login
+FR-A2: Manage Tuition Requirements
+FR-A3: Manage Tutors
+FR-A4: Payment Verification
+FR-A5: Chat
+FR-A6: Monthly Earnings Dashboard
+FR-A7: Settings
+Functional Requirements — Website Structure (Public Pages)
+FR-W1: Home Page
+FR-W2: About Us
+FR-W3: Login (Role Selector)
+FR-W4: Contact Us
+Cross-Cutting Rules
+Non-Functional Requirements
+NFR1: Platform
+NFR2: Technology Stack
+NFR3: Security
+NFR4: Usability
+NFR5: Availability & Performance
+NFR6: Data Retention
+Assumptions and Constraints
+
+
+=== PAGE 2 ===
+Appendix A: Tutor Read Agreement (Full Text)
+Introduction
+Purpose
+This document specifies the software requirements for TutorConnectPro, a web-based platform that
+connects private tutors, parents/students, and tuition centers, with all onboarding, matching, and
+verification managed by a central Admin. This SRS is intended to guide design, development, and testing
+of the platform.
+Scope
+TutorConnectPro is a web application (desktop/mobile browser, no native app) with four user types:
+Tutor, Parent/Student, Tuition Center, and Admin. The platform facilitates:
+Tutor and tuition center onboarding with document verification.
+Posting and matching of tuition requirements between parents and tutors.
+A demo-class approval workflow before any tutor is assigned.
+Commission and subscription fee collection from tutors (screenshot-based payment proof, manually
+verified by Admin).
+Ongoing tuition management: attendance, monthly student reports, and in-app chat with Admin.
+A tuition-center sub-module for managing batches, attendance, performance, and fee reminders
+independently of Admin.
+Direct monthly tuition-fee payments between parents and tutors, after the first month, are outside the
+platform (offline, personal transactions) and are not tracked in the system.
+Definitions, Acronyms, and Abbreviations
+Term
+Meaning
+Admin
+The platform administrator/owner who manages all
+approvals, assignments, and finances
+Tutor
+An individual registering to provide private tuitions
+Parent
+A parent/guardian registering on behalf of a student (used
+interchangeably with “Parent/Student”)
+Tuition Center
+A registered institute-type account offering batch-based
+tuitions for classes 1–10
+Demo
+A trial teaching session conducted by a tutor at the
+student’s house before formal assignment
+Commission
+50% of the tutor’s first month’s salary, payable to Admin
+Subscription
+A recurring fee (Rs. 300/600/900/1200 for 3/6/9/12 months)
+paid by a tutor who wants to take on 2 or more tuitions
+concurrently
+KYC Documents
+Aadhar Card, Passport-size Photo, PAN Card (if available),
+Memos
+Intended Audience
+Development team, QA/testers, project stakeholders, and Admin/operations staff who will use the
+platform.
+Overall Description
+TutorConnectPro operates as a controlled marketplace rather than an open directory: tutors cannot see
+parent/student contact details, and parents cannot see tutor contact details, until Admin formally assigns
+a tutor to a tuition and both sides confirm through the demo process. All matching, approvals, and
+
+
+=== PAGE 3 ===
+financial verification pass through Admin as the central authority.
+User Roles Overview
+Role
+Can Register Directly
+Requires Admin Approval
+Primary Purpose
+Tutor
+Yes
+Yes (document + agreement
+verification)
+Apply for and deliver tuitions
+Parent/Student
+Yes
+No (only tutor/center are
+verified)
+Post tuition requirements,
+receive assigned tutor
+Tuition Center
+Yes
+Yes (document verification)
+Operate batch-based classes
+(1–10), may also request
+tutors from Admin’s pool
+Admin
+Pre-provisioned (not self-
+registered)
+N/A
+Oversee entire platform:
+matching, verification,
+payments, chat
+Functional Requirements — Tutor Module
+FR-T1: Tutor Registration
+The registration form shall capture:
+1. Name
+2. Age
+3. Qualification
+4. WhatsApp number
+5. Experience
+6. Email ID
+7. Password
+8. Gender
+9. Preferred location(s) — multi-select
+10. “Can teach up to which class” — selection
+11. Teaching mode — Online / Offline / Both
+12. Document uploads (for verification):
+Aadhar card
+Passport-size photo
+PAN card (optional/if available)
+Memos (educational/experience certificates)
+13. Read Agreement — displayed in full, accepted via a mandatory checkbox before submission.
+Agreement content includes:
+50% commission is payable from the tutor’s first month’s salary.
+Tutor must not share student/parent profile information with anyone outside the platform.
+Tutor must maintain professional conduct at all times.
+Taking on 2 or more tuitions concurrently requires an active subscription.
+Subscription pricing: Rs. 300 (3 months) / Rs. 600 (6 months) / Rs. 900 (9 months) / Rs. 1200 (12
+months).
+No fake registrations permitted.
+Validation rules: - Email must be unique across the system. Duplicate email is rejected at registration
+(“fake registration” check). - All fields listed above are mandatory except PAN card. - Agreement
+checkbox must be checked to enable the Submit button.
+Post-submission status: Registration enters a Pending Verification state. Tutor cannot log in to full
+features (cannot apply for tuitions) until Admin manually reviews and approves the uploaded documents
+and agreement acceptance.
+
+
+=== PAGE 4 ===
+FR-T2: Tutor Login
+Login fields: Email ID, Password.
+On successful login, tutor is routed to their dashboard, with feature access depending on approval
+status (Pending / Approved / Rejected).
+FR-T3: Tutor Dashboard — Before Tuition Assignment
+1. View Tuition Requirements: Tutor can see a list of all open tuition requirements posted by Admin
+(requirement details such as class, subject, location, salary range — as entered by Admin; exact
+requirement fields defined in FR-A2).
+2. Apply for a Tuition: Tutor can apply to any listed open requirement. No pre-shortlisting restriction
+— any approved tutor may apply to any open requirement.
+3. Demo Outcome Tracking: After a demo class is conducted (see FR-P4), the tutor’s application
+shows a status of Accepted or Rejected, updated by Admin (Admin conveys the parent’s decision
+to the tutor; the tutor never receives this decision directly from the parent). If Rejected, the tutor
+remains free to apply for other open requirements.
+4. Chat with Admin: Tutor has access to a real-time, in-app chat inbox with Admin.
+5. Subscribe for 2+ Tuitions: If a tutor wants to apply for a second (or further) concurrent tuition
+while already holding one, the system requires an active subscription. The subscription payment
+must be completed before the tutor is allowed to apply to the additional (2nd, 3rd, …) tuition
+requirement. Subscription plans: Rs. 300/3 months, Rs. 600/6 months, Rs. 900/9 months, Rs.
+1200/12 months.
+Payment method: platform displays a payment QR/scanner; tutor pays and uploads a
+screenshot as proof; Admin manually verifies and marks the subscription as active.
+FR-T4: Tutor Dashboard — After Tuition Assignment
+1. First-Month Commission Payment (mandatory gate):
+Once a tuition is assigned and the tutor has collected the first month’s salary from the parent
+(agreed bilaterally, see FR-T4.2), the tutor must pay 50% of that first month’s salary to Admin.
+Payment method: platform displays a payment QR/scanner; tutor pays and uploads a
+screenshot as proof of payment.
+Admin manually verifies the screenshot and marks the payment as Paid.
+The system shall clearly display to the tutor: “Pay your first month’s half salary to Admin —
+remaining months are yours,” along with the current payment status (Pending Upload / Pending
+Verification / Paid).
+2. Salary Negotiation: Monthly salary amount is negotiated directly and offline between tutor and
+parent; the system does not fix or enforce a salary figure. From the 2nd month onward, all fee
+payments happen directly between tutor and parent, offline, with no tracking or involvement by the
+platform.
+3. Monthly Earnings: Tutor dashboard displays a running record/summary of monthly earnings
+entries logged by the tutor (self-reported, since actual payment is offline).
+4. Monthly Student Report: Tutor must submit a monthly report per assigned student containing:
+Attendance
+Syllabus covered
+Marks
+Remarks
+5. Attendance: Tutor self-marks attendance per class/day (simple checkbox-based marking; no
+geolocation or photo proof required).
+6. Apply for Additional Tuitions: Tutor may continue to browse and apply for other open tuition
+requirements even after being assigned one (subject to the subscription rule in FR-T3.5 if this would
+be their 2nd+ concurrent tuition).
+7. Chat with Admin: Real-time in-app chat remains available.
+FR-T5: Visibility Restriction
+Tutors shall not be able to view any parent/student contact details (name shown may be
+
+
+=== PAGE 5 ===
+partial/anonymized as part of the requirement listing, but phone/address/email are hidden) until Admin
+formally assigns the tuition to that tutor and the demo is accepted.
+Functional Requirements — Parent/Student Module
+FR-P1: Parent/Student Registration
+The registration form shall capture:
+1. Student Name
+2. Parent Names (Mother and Father, or Guardian)
+3. Email ID
+4. Password
+5. Mobile Number
+Validation rules: - Email must be unique across the system. - One parent account may register
+multiple children/tuition requests under the same login.
+FR-P2: Parent/Student Login
+Login fields: Email ID, Password.
+FR-P3: Apply for a Tuition (Requirement Posting)
+Parent posts a tuition requirement specifying:
+1. Name of the student
+2. Class
+3. School name
+4. Syllabus — CBSE / SSC / ICSE (selectable)
+This requirement is submitted to Admin, who lists it for tutors to apply to (see FR-A2, FR-T3.1).
+FR-P4: Demo and Tutor Assignment Workflow
+1. Admin selects a tutor (from applicants) for a parent’s posted requirement and arranges a demo.
+2. The demo is conducted by the tutor visiting the student’s house in person; scheduling is tracked in-
+app but the demo itself is a manual/offline process.
+3. Attending the demo is at the parent’s discretion (parents may or may not personally observe it).
+4. After the demo, the parent marks the outcome in-app as Accepted or Rejected for that tutor.
+5. Admin reviews the parent’s decision and conveys the outcome to the tutor as Accepted/Rejected
+(tutor never sees the parent’s decision directly — always relayed via Admin, per FR-T3.3).
+6. If Rejected, Admin may offer the parent another tutor option; the parent may choose among
+candidates presented (parent’s choice is not restricted to one option — parent may consider multiple
+tutor candidates before finalizing).
+7. If Accepted, the tuition is formally assigned to that tutor.
+FR-P5: Parent Dashboard — After Tutor Assignment
+1. Tutor Details Reveal: Once Admin formally assigns a tutor and the demo is marked Accepted, the
+tutor’s contact details become visible to the parent (previously hidden per FR-P6).
+2. Student Monthly Report: Parent can view the monthly report submitted by the tutor (attendance,
+syllabus covered, marks, remarks — as per FR-T4.4).
+3. Monthly Tuition Fee Payment: Handled directly and offline between parent and tutor from the
+first month onward; not tracked or processed within the platform.
+FR-P6: Visibility Restriction
+
+
+=== PAGE 6 ===
+Parents shall not be able to view any tutor contact details until Admin has formally assigned that tutor to
+their tuition request and the demo outcome is Accepted.
+Functional Requirements — Tuition Center Module
+FR-C1: Tuition Center Registration
+The registration form shall capture:
+1. Principal/Owner Name
+2. Email ID
+3. Password
+4. Documents of the center (for verification — uploaded as files)
+Validation rules: - Email must be unique across the system. - Registration enters a Pending
+Verification state; Admin manually reviews uploaded documents and approves/rejects the center
+account.
+FR-C2: Tuition Center Login
+Login fields: Email ID, Password.
+FR-C3: Post Tutor Requirements to Admin’s Tutor Pool
+A tuition center can also request tutors from the same Admin-managed tutor pool used for individual
+parent requirements, by specifying:
+1. Class
+2. Salary
+3. Eligibility rules for tutor
+4. Location
+This follows the same Admin-mediated matching flow described in FR-A2/FR-T3.1 (tutors from the shared
+pool can apply; Admin manages the assignment).
+FR-C4: Tuition Center Independent Operations
+Once Admin approves a tuition center’s registration, the center’s day-to-day operations are managed
+independently by the center’s own staff, with no further involvement from Admin. This includes:
+1. Select Class: Center manages classes 1–10.
+2. Batches: Create and manage batches (a batch is a group of students, per class, taught by the
+center’s tutor(s)).
+3. Attendance of Students: Center staff mark attendance for students in each batch.
+4. Performance Tracking: Record performance of each student.
+5. Send Performance to Parents: Center staff can send a student’s performance report to that
+student’s parent through the system.
+6. Fees: Track fee status per student.
+7. Fee Reminders: Center staff manually send fee reminders to parents (no automated SMS/email
+trigger).
+8. Exam Reports: Record and share exam reports per student.
+Functional Requirements — Admin Module
+FR-A1: Admin Login
+
+
+=== PAGE 7 ===
+Login fields: Email ID, Password (Admin account is pre-provisioned, not self-registered).
+FR-A2: Manage Tuition Requirements
+View all tuition requirements posted by parents and tuition centers.
+List/publish open requirements for tutors to browse and apply to.
+View and manage all tutor applications received per requirement.
+FR-A3: Manage Tutors
+View all registered tutors and their profile/document/agreement status.
+Approve or reject tutor registrations after manual document review.
+Approve or reject tuition center registrations after manual document review.
+Approve or reject a tutor’s demo outcome relay (conveying parent’s Accept/Reject decision to the
+tutor, per FR-P4.5).
+FR-A4: Payment Verification
+1. Subscription Payments: Review tutor-uploaded payment screenshots for the 2+ tuitions
+subscription; manually verify and mark Active/Paid.
+2. First-Month Commission Payments: Review tutor-uploaded payment screenshots for the 50%
+first-month salary commission; manually verify and mark as Paid.
+FR-A5: Chat
+Real-time, in-app messaging inbox with all tutors and all parents (chat threads per user, from the
+Admin side).
+FR-A6: Monthly Earnings Dashboard
+Displays platform earnings for the month/period, combining:
+Commission payments (verified, from tutors’ first-month salary)
+Subscription payments (verified, from tutors taking 2+ tuitions)
+FR-A7: Settings
+Admin Profile — view/edit profile details.
+Change Password.
+Functional Requirements — Website Structure
+(Public Pages)
+FR-W1: Home Page
+Landing page introducing TutorConnectPro, with navigation to: - About Us - Login (role selector:
+Student/Parent, Tutor, Tuition Center, Admin) - Contact Us - “Chat with Admin” — a WhatsApp button that
+redirects to WhatsApp (separate from the in-app real-time chat available after login).
+FR-W2: About Us
+Static informational page describing the platform.
+FR-W3: Login (Role Selector)
+A single login entry point that routes to role-specific login forms: - Student/Parent Login - Tutor Login -
+
+
+=== PAGE 8 ===
+Tuition Center Login - Admin Login
+FR-W4: Contact Us
+Static contact page with platform contact information.
+Cross-Cutting Rules
+1. Duplicate Email Prevention: No two accounts (across tutor, parent, or tuition center) may share
+the same email address; this is the platform’s fake-registration check.
+2. Visibility Gating: Contact details between tutors and parents are mutually hidden until Admin
+formally assigns and the demo is Accepted (applies both directions — see FR-T5 and FR-P6).
+3. Manual Verification Everywhere: All document verification (tutor KYC, tuition center documents)
+and all payment verification (commission, subscription) is performed manually by Admin — no OCR,
+no automated payment gateway.
+4. In-App Chat vs. WhatsApp: The home page WhatsApp button and the logged-in real-time chat
+inbox are two separate, independent communication channels.
+5. Offline Financial Transactions: Monthly tuition fees (parent → tutor, from month 1 onward) are
+personal/offline transactions and are outside platform scope, except for the first-month 50%
+commission (tutor → Admin) which is tracked in-app via screenshot upload and manual verification.
+Non-Functional Requirements
+NFR1: Platform
+Web application only (responsive design for desktop and mobile browsers); no native mobile app in
+current scope.
+NFR2: Technology Stack
+Database: MongoDB.
+Given the requirement to “keep it easy” alongside MongoDB, the recommended stack is the MERN
+stack: MongoDB (database), Express.js (backend framework), React.js (frontend), Node.js (runtime)
+— chosen for ease of development, a single JavaScript language across the stack, and natural fit
+with MongoDB’s document model (useful for variable-structure data such as tutor documents, chat
+messages, and monthly reports).
+NFR3: Security
+Passwords stored using industry-standard hashing (e.g., bcrypt).
+Role-based access control enforced for all four user types.
+Uploaded documents (Aadhar, PAN, photos, memos, payment screenshots) stored securely with
+access restricted to Admin and the uploading user.
+NFR4: Usability
+Simple, form-driven registration flows suitable for non-technical users (parents, tutors).
+Clear status indicators for pending/approved/rejected states (registration, demo, payments).
+NFR5: Availability & Performance
+Real-time chat should reflect new messages without requiring a full page reload.
+Standard web application uptime and responsiveness expectations for a moderate-traffic regional
+platform.
+
+
+=== PAGE 9 ===
+NFR6: Data Retention
+Uploaded verification documents and payment screenshots retained for audit purposes.
+Assumptions and Constraints
+1. Admin account(s) are created directly in the system/database (no public admin self-registration
+flow).
+2. Tuition requirement fields visible to tutors before applying (class, subject, location, salary range,
+syllabus) are entered by Admin at the time of listing, based on the parent’s or tuition center’s
+original request.
+3. “Monthly earnings” reported on the tutor dashboard is a self-reported record for the tutor’s own
+reference, since actual monthly fee collection after month 1 is offline and untracked.
+4. Tuition center’s internal batch/attendance/performance/fee data is isolated to that center’s own
+module and does not feed into Admin’s platform-wide “Monthly Earnings” figure (FR-A6), which
+reflects commission and subscription income only.
+5. No payment gateway (Razorpay, UPI API, etc.) integration is in scope; all payments are proof-of-
+payment (screenshot) plus manual Admin verification.
+Appendix A: Tutor Read Agreement (Full Text)
+The following is presented to every tutor at registration and must be accepted via checkbox before the
+registration can be submitted:
+1. 50% commission is payable to Admin from the tutor’s first month’s salary.
+2. Tutor must not share student and parent profile information with anyone.
+3. Tutor must maintain professional conduct at all times.
+4. Taking on 2 or more tuitions concurrently requires an active subscription.
+5. Subscription fee: Rs. 300 for 3 months / Rs. 600 for 6 months / Rs. 900 for 9 months / Rs. 1200 for 12
+months.
+6. No fake registrations are permitted.
+
+

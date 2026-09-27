@@ -1,0 +1,22 @@
+{
+  "name": "smart-minds-tuitions-workspace",
+  "version": "1.0.0",
+  "description": "Smart Minds Tuitions - Full Stack Production Platform",
+  "scripts": {
+    "install-all": "npm install --prefix server && npm install --prefix client",
+    "server": "npm run start --prefix server",
+    "server:dev": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "client:build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "test": "npm run test --prefix server"
+  },
+  "keywords": [
+    "education",
+    "tuitions",
+    "mern",
+    "smart-minds-tuitions"
+  ],
+  "author": "Smart Minds Tuitions",
+  "license": "ISC"
+}
