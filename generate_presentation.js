@@ -1,3 +1,11 @@
+/**
+ * Smart Minds Tuitions - Polished Client Presentation Generator
+ *
+ * This is a layout and visual-system revision of the existing 23-slide deck.
+ * Content and business meaning are preserved while the presentation is rebuilt
+ * on a consistent 16:9 grid with uniform typography, cards, footer, and spacing.
+ */
+
 const pptxgen = require('pptxgenjs');
 const path = require('path');
 
@@ -5,1677 +13,1017 @@ const pptx = new pptxgen();
 pptx.layout = 'LAYOUT_16x9';
 pptx.author = 'Smart Minds Tuitions';
 pptx.company = 'Smart Minds Tuitions';
-pptx.title = 'Smart Minds Tuitions - Client Project Presentation';
+pptx.title = 'Smart Minds Tuitions - Comprehensive Platform Presentation';
+pptx.subject = 'Client-ready platform architecture and capability overview';
 
-// --- BRAND COLOR PALETTE (RGB Hex without #) ---
+// -----------------------------------------------------------------------------
+// DESIGN SYSTEM
+// -----------------------------------------------------------------------------
 const C = {
-  navyDark: '050814',      // Deepest background
-  navyCore: '0A1128',      // Primary luxury navy
-  navyCard: '131F42',      // Elevated navy surface
-  navyBorder: '243360',    // Navy outline
-  navyLight: '1E2D5A',     // Card accent navy
-  goldPrimary: 'D4AF37',   // Champagne Gold
-  goldLight: 'F3E5AB',     // Pale champagne gold
-  goldDark: '996515',      // Deep antique gold
-  goldMuted: 'C5A028',     // Muted gold text
-  creamBg: 'FCFBF7',       // Light slide surface
-  creamCard: 'F4F0EA',     // Neutral light card
-  sandBorder: 'E2DDD5',    // Light border sand
-  white: 'FFFFFF',         // Pure white
-  textDark: '0A1128',      // Primary dark text
-  textMuted: '64748B',     // Gray secondary text
-  textLight: 'E2E8F0',     // Light slate text
-  greenBadge: '059669',    // Verified success green
-  amberBadge: 'D97706',    // Pending amber
-  purpleBadge: '7C3AED',   // Center purple
-  blueBadge: '2563EB',     // Info blue
+  navyDark: '050814',
+  navyBase: '0A1128',
+  navyCard: '111C3A',
+  navyElevated: '16244C',
+  navyBorder: '24345F',
+  navyBorderLight: '304777',
+  gold: 'D4AF37',
+  goldLight: 'F3E5AB',
+  goldMuted: 'C5A059',
+  white: 'FFFFFF',
+  textLight: 'E2E8F0',
+  textMuted: '91A0B5',
+  blue: '2563EB',
+  green: '059669',
+  purple: '7C3AED',
+  amber: 'D97706',
 };
 
-const FONTS = {
-  heading: 'Georgia',
-  body: 'Calibri',
+const F = {
+  heading: 'Segoe UI',
+  body: 'Segoe UI',
 };
 
-const LOGO_PATH = path.resolve(__dirname, 'image', 'logo.png');
-const HOMEPAGE_PATH = path.resolve(__dirname, 'image', 'homepage.png');
+const LOGO = path.resolve(__dirname, 'image', 'logo.png');
+const OUT = path.resolve(__dirname, 'Smart_Minds_Tuitions_Presentation_Polished.pptx');
 
-// --- HELPER: Slide Master Decorator ---
-function applySlideHeader(slide, categoryTag, titleText, subtitleText, isDark = true) {
-  // Background
-  slide.background = { color: isDark ? C.navyCore : C.creamBg };
+const GRID = {
+  left: 0.8,
+  right: 12.53,
+  width: 11.73,
+  top: 1.85,
+  footerLine: 6.95,
+};
 
-  // Top Banner Pill / Category
-  if (categoryTag) {
-    slide.addShape(pptx.ShapeType.roundRect, {
-      x: 0.8,
-      y: 0.45,
-      w: 2.8,
-      h: 0.32,
-      rectRadius: 0.15,
-      fill: { color: isDark ? C.navyCard : C.creamCard },
-      line: { color: isDark ? C.goldPrimary : C.goldDark, width: 1 },
-    });
-    slide.addText(categoryTag.toUpperCase(), {
-      x: 0.8,
-      y: 0.45,
-      w: 2.8,
-      h: 0.32,
-      fontSize: 9,
-      fontFace: FONTS.body,
-      bold: true,
-      color: isDark ? C.goldLight : C.goldDark,
-      align: 'center',
-      valign: 'middle',
-    });
-  }
+function addMaster(slide, number, category, title, subtitle) {
+  slide.background = { color: C.navyBase };
 
-  // Slide Main Title
-  slide.addText(titleText, {
-    x: 0.8,
-    y: categoryTag ? 0.82 : 0.5,
-    w: 8.5,
-    h: 0.6,
-    fontSize: 22,
-    fontFace: FONTS.heading,
-    bold: true,
-    color: isDark ? C.white : C.navyDark,
-    valign: 'middle',
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: GRID.left, y: 0.42, w: 2.65, h: 0.29,
+    rectRadius: 0.07,
+    fill: { color: C.navyCard },
+    line: { color: C.gold, width: 1 },
+  });
+  slide.addText(category.toUpperCase(), {
+    x: GRID.left, y: 0.42, w: 2.65, h: 0.29,
+    fontFace: F.body, fontSize: 8.5, bold: true,
+    color: C.goldLight, align: 'center', valign: 'middle',
+    margin: 0,
   });
 
-  // Slide Subtitle / Supporting description
-  if (subtitleText) {
-    slide.addText(subtitleText, {
-      x: 0.8,
-      y: categoryTag ? 1.38 : 1.1,
-      w: 11.5,
-      h: 0.35,
-      fontSize: 11,
-      fontFace: FONTS.body,
-      color: isDark ? C.goldLight : C.textMuted,
-      valign: 'top',
-    });
-  }
-
-  // Top Right Logo on every slide
-  slide.addImage({
-    path: LOGO_PATH,
-    x: 12.0,
-    y: 0.4,
-    w: 0.75,
-    h: 0.75,
+  slide.addText(title, {
+    x: GRID.left, y: 0.78, w: 10.2, h: 0.5,
+    fontFace: F.heading, fontSize: 21, bold: true,
+    color: C.white, valign: 'middle', margin: 0,
+  });
+  slide.addText(subtitle, {
+    x: GRID.left, y: 1.32, w: 10.65, h: 0.35,
+    fontFace: F.body, fontSize: 10.5,
+    color: C.goldLight, valign: 'top', margin: 0,
   });
 
-  // Bottom Footer Bar
+  slide.addImage({ path: LOGO, x: 11.79, y: 0.43, w: 0.72, h: 0.72 });
+
   slide.addShape(pptx.ShapeType.line, {
-    x: 0.8,
-    y: 7.0,
-    w: 11.73,
-    h: 0,
-    line: { color: isDark ? C.navyBorder : C.sandBorder, width: 1 },
+    x: GRID.left, y: GRID.footerLine, w: GRID.width, h: 0,
+    line: { color: C.navyBorder, width: 1 },
   });
-
   slide.addText('SMART MINDS TUITIONS  •  Client Project Presentation  •  Confidential', {
-    x: 0.8,
-    y: 7.05,
-    w: 8.0,
-    h: 0.3,
-    fontSize: 9,
-    fontFace: FONTS.body,
-    color: isDark ? C.textMuted : C.textMuted,
-    valign: 'middle',
+    x: GRID.left, y: 7.02, w: 7.8, h: 0.25,
+    fontFace: F.body, fontSize: 8.5, color: C.textMuted,
+    margin: 0, valign: 'middle',
   });
-
-  slide.addText('www.smartmindstuitions.com', {
-    x: 9.53,
-    y: 7.05,
-    w: 3.0,
-    h: 0.3,
-    fontSize: 9,
-    fontFace: FONTS.body,
-    color: isDark ? C.goldPrimary : C.goldDark,
-    align: 'right',
-    valign: 'middle',
+  slide.addText(`Slide ${String(number).padStart(2, '0')} of 23`, {
+    x: 10.35, y: 7.02, w: 2.18, h: 0.25,
+    fontFace: F.body, fontSize: 8.5, color: C.goldMuted,
+    margin: 0, align: 'right', valign: 'middle',
   });
 }
 
-console.log('[PPTX] Initializing presentation generation...');
-
-// =========================================================================
-// SLIDE 1: COVER
-// =========================================================================
-const s1 = pptx.addSlide();
-s1.background = { color: C.navyDark };
-
-// Decorative Background Gradient Shapes
-s1.addShape(pptx.ShapeType.ellipse, {
-  x: -1.0, y: -1.0, w: 6.0, h: 6.0,
-  fill: { color: C.navyCore },
-  line: { color: C.navyCard, width: 2 }
-});
-s1.addShape(pptx.ShapeType.ellipse, {
-  x: 9.0, y: 3.0, w: 6.0, h: 6.0,
-  fill: { color: C.navyCore },
-  line: { color: C.navyBorder, width: 1 }
-});
-
-// Central Card Container
-s1.addShape(pptx.ShapeType.roundRect, {
-  x: 1.2, y: 1.0, w: 10.93, h: 5.4,
-  rectRadius: 0.25,
-  fill: { color: C.navyCore },
-  line: { color: C.goldPrimary, width: 1.5 }
-});
-
-// Official Circular Logo
-s1.addImage({
-  path: LOGO_PATH,
-  x: 1.8, y: 1.6, w: 2.2, h: 2.2,
-});
-
-// Trust Badge Tag
-s1.addShape(pptx.ShapeType.roundRect, {
-  x: 4.4, y: 1.6, w: 3.2, h: 0.35,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s1.addText('OFFICIAL CLIENT PROPOSAL', {
-  x: 4.4, y: 1.6, w: 3.2, h: 0.35,
-  fontSize: 10, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-// Title & Subtitle
-s1.addText('SMART MINDS TUITIONS', {
-  x: 4.4, y: 2.1, w: 7.2, h: 0.8,
-  fontSize: 32, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-});
-s1.addText('"Connecting Students, Parents & Verified Tutors"', {
-  x: 4.4, y: 2.9, w: 7.2, h: 0.45,
-  fontSize: 15, fontFace: FONTS.heading, italic: true, color: C.goldPrimary, valign: 'top'
-});
-s1.addText('A secure, admin-managed tutoring platform engineered to simplify tutor discovery, multi-step verification, controlled matching, and holistic tuition operations.', {
-  x: 4.4, y: 3.45, w: 7.0, h: 0.9,
-  fontSize: 12, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Feature Pills on Cover
-const coverPills = [
-  '🛡️ Admin-Verified Tutors',
-  '🔒 Contact Privacy Protection',
-  '📅 Structured Demo Workflow',
-  '🏢 Tuition Center Desk'
-];
-coverPills.forEach((pill, idx) => {
-  s1.addShape(pptx.ShapeType.roundRect, {
-    x: 1.8 + idx * 2.45, y: 4.9, w: 2.3, h: 0.45,
-    rectRadius: 0.12,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+function addCard(slide, x, y, w, h, opts = {}) {
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x, y, w, h,
+    rectRadius: opts.radius || 0.1,
+    fill: { color: opts.fill || C.navyCard },
+    line: { color: opts.line || C.navyBorder, width: opts.lineWidth || 1 },
   });
-  s1.addText(pill, {
-    x: 1.8 + idx * 2.45, y: 4.9, w: 2.3, h: 0.45,
-    fontSize: 9.5, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
+}
+
+function addBulletList(slide, items, x, y, w, h, opts = {}) {
+  slide.addText(items.map(item => `• ${item}`).join('\n'), {
+    x, y, w, h,
+    fontFace: F.body, fontSize: opts.fontSize || 9,
+    color: opts.color || C.textLight,
+    valign: 'top', margin: opts.margin === undefined ? 0 : opts.margin,
+    breakLine: false,
   });
-});
+}
 
-s1.addText('Client Project Presentation  •  System Architecture & Feature Overview', {
-  x: 1.2, y: 6.6, w: 10.93, h: 0.3,
-  fontSize: 10, fontFace: FONTS.body, color: C.textMuted, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 2: THE VISION
-// =========================================================================
-const s2 = pptx.addSlide();
-applySlideHeader(s2, 'Executive Overview', 'The Vision', 'One platform. Four distinct user roles. One seamlessly controlled tutoring ecosystem.');
-
-// Centerpiece Statement Card
-s2.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.85, w: 11.73, h: 1.0,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s2.addText('Smart Minds Tuitions bridges the trust and coordination gap between parents seeking verified educators, qualified tutors finding sustainable teaching opportunities, and coaching centers scaling student batches.', {
-  x: 1.1, y: 1.95, w: 11.13, h: 0.8,
-  fontSize: 13, fontFace: FONTS.body, color: C.white, align: 'center', valign: 'middle'
-});
-
-// 3 Stakeholder Cards Around Central Admin Authority
-const visionRoles = [
-  {
-    title: '👨‍👩‍👧 Parents & Students',
-    desc: 'Access verified subject tutors, post custom home/online requirements, evaluate educators via free demo sessions, and monitor academic progress cards.',
-    color: C.goldPrimary,
-    x: 0.8, y: 3.1
-  },
-  {
-    title: '🎓 Verified Educators',
-    desc: 'Undergo rigorous KYC verification (ID & degree audit), discover nearby student requirements, conduct demos, and manage earnings & attendance registers.',
-    color: C.goldPrimary,
-    x: 8.73, y: 3.1
-  },
-  {
-    title: '🏢 Tuition Centers',
-    desc: 'Manage Classes 1–10 batch rosters, track daily student attendance, record test rankings, trigger 1-click WhatsApp fee reminders, and hire specialized faculty.',
-    color: C.goldPrimary,
-    x: 0.8, y: 5.1
-  },
-  {
-    title: '👑 Central Admin Authority',
-    desc: 'Acts as the single source of truth for tutor KYC audits, requirement matching, demo scheduling, 50% commission verification, subscriptions, and live chat support.',
-    color: C.greenBadge,
-    x: 8.73, y: 5.1
-  }
-];
-
-visionRoles.forEach(r => {
-  s2.addShape(pptx.ShapeType.roundRect, {
-    x: r.x, y: r.y, w: 3.8, h: 1.65,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+function addNumberBadge(slide, number, x, y, size = 0.34) {
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x, y, w: size, h: size,
+    fill: { color: C.gold },
+    line: { color: C.gold, width: 0.5 },
   });
-  s2.addText(r.title, {
-    x: r.x + 0.2, y: r.y + 0.12, w: 3.4, h: 0.35,
-    fontSize: 13, fontFace: FONTS.heading, bold: true, color: r.color, valign: 'middle'
+  slide.addText(number, {
+    x, y, w: size, h: size,
+    fontFace: F.body, fontSize: 8, bold: true,
+    color: C.navyDark, align: 'center', valign: 'middle', margin: 0,
   });
-  s2.addText(r.desc, {
-    x: r.x + 0.2, y: r.y + 0.5, w: 3.4, h: 1.05,
-    fontSize: 10, fontFace: FONTS.body, color: C.textLight, valign: 'top'
+}
+
+function addFooterOnly(slide, number) {
+  slide.addShape(pptx.ShapeType.line, {
+    x: GRID.left, y: GRID.footerLine, w: GRID.width, h: 0,
+    line: { color: C.navyBorder, width: 1 },
   });
-});
+  slide.addText('SMART MINDS TUITIONS  •  Client Project Presentation  •  Confidential', {
+    x: GRID.left, y: 7.02, w: 7.8, h: 0.25,
+    fontFace: F.body, fontSize: 8.5, color: C.textMuted, margin: 0,
+  });
+  slide.addText(`Slide ${String(number).padStart(2, '0')} of 23`, {
+    x: 10.35, y: 7.02, w: 2.18, h: 0.25,
+    fontFace: F.body, fontSize: 8.5, color: C.goldMuted,
+    margin: 0, align: 'right',
+  });
+}
 
-// Central Connecting Core Graphic
-s2.addShape(pptx.ShapeType.roundRect, {
-  x: 4.86, y: 3.1, w: 3.6, h: 3.65,
-  rectRadius: 0.2,
-  fill: { color: C.navyDark },
-  line: { color: C.goldPrimary, width: 1.5 }
-});
-s2.addImage({
-  path: LOGO_PATH,
-  x: 5.91, y: 3.3, w: 1.5, h: 1.5
-});
-s2.addText('CENTRALIZED GOVERNANCE', {
-  x: 5.06, y: 4.9, w: 3.2, h: 0.3,
-  fontSize: 11, fontFace: FONTS.body, bold: true, color: C.goldPrimary, align: 'center', valign: 'middle'
-});
-s2.addText('• Strict KYC Verification\n• Private Contact Redaction\n• Admin-Relayed Demo Matching\n• Manual Payment Audits\n• Real-Time Support Desk', {
-  x: 5.06, y: 5.25, w: 3.2, h: 1.35,
-  fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, align: 'center', valign: 'top'
-});
+// -----------------------------------------------------------------------------
+// 01 — COVER
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  slide.background = { color: C.navyDark };
+  addCard(slide, 0.8, 0.62, 11.73, 6.22, { fill: C.navyBase, line: C.gold, lineWidth: 1.5, radius: 0.18 });
 
-
-// =========================================================================
-// SLIDE 3: THE PROBLEM
-// =========================================================================
-const s3 = pptx.addSlide();
-applySlideHeader(s3, 'Market Challenge', 'Challenges in the Traditional Tuition Process', 'Key friction points faced by parents, educators, and institutions in unregulated environments.');
-
-const problems = [
-  {
-    num: '01',
-    title: 'Unverified Tutor Credentials',
-    desc: 'Parents struggle to verify background, degree qualifications, and government identities of private home tutors.'
-  },
-  {
-    num: '02',
-    title: 'Uncontrolled Contact Sharing',
-    desc: 'Open directories expose phone numbers and private addresses prematurely, leading to spam and privacy breaches.'
-  },
-  {
-    num: '03',
-    title: 'Disorganized Demo Classes',
-    desc: 'No structured trial session mechanism; parents have no formal way to evaluate educators before financial commitment.'
-  },
-  {
-    num: '04',
-    title: 'Manual Tutor Application Tracking',
-    desc: 'Qualified tutors lack a transparent platform to discover genuine student leads filtered by locality and subject specializations.'
-  },
-  {
-    num: '05',
-    title: 'Coaching Center Operational Overhead',
-    desc: 'Tuition centers rely on paper registers to track Class 1–10 batches, attendance, exam averages, and monthly fee collections.'
-  },
-  {
-    num: '06',
-    title: 'Disputed Commission & Fee Settlements',
-    desc: 'Lack of transparent audit trails for platform commissions, subscription passes, and fee verification creates operational disputes.'
-  }
-];
-
-problems.forEach((p, idx) => {
-  const col = idx % 3;
-  const row = Math.floor(idx / 3);
-  const x = 0.8 + col * 3.97;
-  const y = 1.9 + row * 2.45;
-
-  s3.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 3.8, h: 2.25,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+  slide.addImage({ path: LOGO, x: 1.3, y: 1.16, w: 1.95, h: 1.95 });
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: 3.62, y: 1.2, w: 3.35, h: 0.3, rectRadius: 0.07,
+    fill: { color: C.navyCard }, line: { color: C.gold, width: 1 },
+  });
+  slide.addText('OFFICIAL CLIENT PROPOSAL', {
+    x: 3.62, y: 1.2, w: 3.35, h: 0.3,
+    fontFace: F.body, fontSize: 8.5, bold: true,
+    color: C.goldLight, align: 'center', valign: 'middle', margin: 0,
+  });
+  slide.addText('SMART MINDS TUITIONS', {
+    x: 3.62, y: 1.6, w: 7.4, h: 0.68,
+    fontFace: F.heading, fontSize: 28, bold: true,
+    color: C.white, valign: 'middle', margin: 0,
+  });
+  slide.addText('"Connecting Students, Parents & Verified Tutors"', {
+    x: 3.62, y: 2.33, w: 7.4, h: 0.35,
+    fontFace: F.heading, fontSize: 14, italic: true,
+    color: C.gold, margin: 0,
+  });
+  slide.addText('A secure, admin-governed educational ecosystem engineered to simplify tutor discovery, KYC credential verification, controlled matching, and ongoing tuition operations.', {
+    x: 1.3, y: 3.32, w: 10.73, h: 0.66,
+    fontFace: F.body, fontSize: 11.5, color: C.textLight,
+    margin: 0, valign: 'top',
   });
 
-  // Number Badge
-  s3.addShape(pptx.ShapeType.roundRect, {
-    x: x + 0.2, y: y + 0.2, w: 0.6, h: 0.35,
-    rectRadius: 0.08,
-    fill: { color: C.navyDark },
-    line: { color: C.goldPrimary, width: 1 }
-  });
-  s3.addText(p.num, {
-    x: x + 0.2, y: y + 0.2, w: 0.6, h: 0.35,
-    fontSize: 10, fontFace: FONTS.body, bold: true, color: C.goldPrimary, align: 'center', valign: 'middle'
-  });
-
-  s3.addText(p.title, {
-    x: x + 0.9, y: y + 0.18, w: 2.7, h: 0.45,
-    fontSize: 12.5, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-  });
-
-  s3.addText(p.desc, {
-    x: x + 0.2, y: y + 0.7, w: 3.4, h: 1.4,
-    fontSize: 10.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 4: THE SOLUTION
-// =========================================================================
-const s4 = pptx.addSlide();
-applySlideHeader(s4, 'Platform Solution', 'The Smart Minds Tuitions Solution', 'A controlled, admin-moderated marketplace designed for trust, safety, and operational excellence.');
-
-// Highlight Concept Banner
-s4.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.8, w: 11.73, h: 0.8,
-  rectRadius: 0.12,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s4.addText('🌟  CONTROLLED MARKETPLACE MODEL: Unlike open classified sites, all requirements, tutor applications, demo sessions, and contact coordinates flow through an authenticated Admin Verification & Matching Engine.', {
-  x: 1.0, y: 1.8, w: 11.33, h: 0.8,
-  fontSize: 11, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-// 10-Step Controlled Flowchart
-const solutionSteps = [
-  { step: '1', title: 'Parent Posts Lead', desc: 'Syllabus, Grade, Location & Budget' },
-  { step: '2', title: 'Admin Review', desc: 'Requirement validation & publishing' },
-  { step: '3', title: 'Verified Tutor Pool', desc: 'KYC-approved educators discover lead' },
-  { step: '4', title: 'Tutor Applies', desc: 'Educators submit tuition applications' },
-  { step: '5', title: 'Tutor Selection', desc: 'Admin reviews & selects top educator' },
-  { step: '6', title: 'Demo Scheduled', desc: 'Free trial evaluation coordinated' },
-  { step: '7', title: 'Parent Decision', desc: 'Binary decision: Accepted / Rejected' },
-  { step: '8', title: 'Fee Activation', desc: 'Tutor submits 50% commission proof' },
-  { step: '9', title: 'Contacts Unlocked', desc: 'Phone numbers & address revealed' },
-  { step: '10', title: 'Tuition Begins', desc: 'Daily attendance & monthly report logs' },
-];
-
-solutionSteps.forEach((s, idx) => {
-  const col = idx % 5;
-  const row = Math.floor(idx / 5);
-  const x = 0.8 + col * 2.38;
-  const y = 2.85 + row * 1.95;
-
-  s4.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 2.25, h: 1.75,
-    rectRadius: 0.12,
-    fill: { color: C.navyCard },
-    line: { color: idx === 6 || idx === 8 ? C.goldPrimary : C.navyBorder, width: 1 }
-  });
-
-  // Step Number Badge
-  s4.addShape(pptx.ShapeType.ellipse, {
-    x: x + 0.15, y: y + 0.15, w: 0.35, h: 0.35,
-    fill: { color: C.goldPrimary }
-  });
-  s4.addText(s.step, {
-    x: x + 0.15, y: y + 0.15, w: 0.35, h: 0.35,
-    fontSize: 9, fontFace: FONTS.body, bold: true, color: C.navyDark, align: 'center', valign: 'middle'
-  });
-
-  s4.addText(s.title, {
-    x: x + 0.55, y: y + 0.12, w: 1.6, h: 0.4,
-    fontSize: 10.5, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-  });
-
-  s4.addText(s.desc, {
-    x: x + 0.15, y: y + 0.6, w: 1.95, h: 1.0,
-    fontSize: 9, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 5: FOUR USER ROLES
-// =========================================================================
-const s5 = pptx.addSlide();
-applySlideHeader(s5, 'Platform Architecture', 'One Platform. Four User Experiences.', 'Granular, role-based workflows tailored to parents, educators, centers, and platform administrators.');
-
-const rolesCards = [
-  {
-    title: '👨‍👩‍👧 PARENT / STUDENT',
-    badge: 'STUDENT PORTAL',
-    badgeCol: C.blueBadge,
-    items: [
-      'Multi-child registration (CBSE / ICSE)',
-      'Post home & online tuition leads',
-      'Track scheduled evaluation demos',
-      'Accept or reject demo educators',
-      'Unlocked tutor contact coordinates',
-      'Real-time daily attendance registers',
-      'Monthly student academic report cards',
-      'Direct 2-way support chat with Admin'
-    ]
-  },
-  {
-    title: '🎓 EDUCATOR / TUTOR',
-    badge: 'TEACHER PORTAL',
-    badgeCol: C.greenBadge,
-    items: [
-      'Aadhaar & Degree KYC submission',
-      'Multi-class teaching capability profile',
-      'Browse student tuition requirements',
-      'Apply for assignments & conduct demos',
-      'Active tuition operations & parent details',
-      'Lesson attendance & topic registers',
-      'Submit monthly student progress cards',
-      'Multi-Tuition Passes & 50% commission desk'
-    ]
-  },
-  {
-    title: '🏢 TUITION CENTER',
-    badge: 'INSTITUTION DESK',
-    badgeCol: C.purpleBadge,
-    items: [
-      'Trade license & registration audit',
-      'Class 1–10 batch creation & capacities',
-      'Student enrollment & batch assignment',
-      'Daily batch attendance registers',
-      'Unit test & exam score ledgers',
-      'Monthly fee collection tracking',
-      '1-Click WhatsApp payment reminders',
-      'Hire verified subject faculty from Admin'
-    ]
-  },
-  {
-    title: '👑 SUPER ADMIN',
-    badge: 'CONTROL ROOM',
-    badgeCol: C.amberBadge,
-    items: [
-      'Global KPI metrics & revenue intelligence',
-      'Educator KYC document verification',
-      'Tuition center accreditation review',
-      'Lead requirement moderation & matching',
-      'Demo session coordination & dispatch',
-      '50% Commission proof verification',
-      'Multi-Tuition Subscription activation',
-      'Multi-channel real-time support console'
-    ]
-  }
-];
-
-rolesCards.forEach((r, idx) => {
-  const x = 0.8 + idx * 2.98;
-  const y = 1.85;
-
-  s5.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 2.85, h: 4.9,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  // Role Badge
-  s5.addShape(pptx.ShapeType.roundRect, {
-    x: x + 0.15, y: y + 0.15, w: 1.4, h: 0.25,
-    rectRadius: 0.08,
-    fill: { color: r.badgeCol }
-  });
-  s5.addText(r.badge, {
-    x: x + 0.15, y: y + 0.15, w: 1.4, h: 0.25,
-    fontSize: 7.5, fontFace: FONTS.body, bold: true, color: C.white, align: 'center', valign: 'middle'
-  });
-
-  // Title
-  s5.addText(r.title, {
-    x: x + 0.15, y: y + 0.45, w: 2.55, h: 0.4,
-    fontSize: 11, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-  });
-
-  // Bullet items
-  const bulletText = r.items.map(item => `• ${item}`).join('\n');
-  s5.addText(bulletText, {
-    x: x + 0.15, y: y + 0.95, w: 2.55, h: 3.8,
-    fontSize: 8.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 6: HOW THE PLATFORM WORKS (7-Step Timeline)
-// =========================================================================
-const s6 = pptx.addSlide();
-applySlideHeader(s6, 'Platform Workflow', 'How It Works — Step-by-Step Lifecycle', 'The standard operational timeline from account onboarding to active tuition delivery.');
-
-const timelineSteps = [
-  { num: '01', title: 'REGISTER', desc: 'Parent, Tutor, or Tuition Center creates an account.' },
-  { num: '02', title: 'VERIFICATION', desc: 'Admin audits Government ID & Degree certificates.' },
-  { num: '03', title: 'POST REQUIREMENT', desc: 'Parent specifies subject, grade, location & schedule.' },
-  { num: '04', title: 'MATCHING & APPS', desc: 'Approved tutors browse leads and submit applications.' },
-  { num: '05', title: 'DEMO CLASS', desc: 'Admin coordinates a free evaluation trial session.' },
-  { num: '06', title: 'CONFIRMATION', desc: 'Parent accepts or rejects educator based on demo.' },
-  { num: '07', title: 'TUITION COMMENCES', desc: 'Commission paid, contacts unlocked, classes begin.' },
-];
-
-timelineSteps.forEach((t, idx) => {
-  const x = 0.8 + idx * 1.7;
-  const y = 2.4;
-
-  // Step card
-  s6.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 1.55, h: 3.8,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: idx === 4 || idx === 6 ? C.goldPrimary : C.navyBorder, width: 1.2 }
-  });
-
-  // Number Badge Circle
-  s6.addShape(pptx.ShapeType.ellipse, {
-    x: x + 0.45, y: y + 0.25, w: 0.65, h: 0.65,
-    fill: { color: C.navyDark },
-    line: { color: C.goldPrimary, width: 1.5 }
-  });
-  s6.addText(t.num, {
-    x: x + 0.45, y: y + 0.25, w: 0.65, h: 0.65,
-    fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, align: 'center', valign: 'middle'
-  });
-
-  // Title
-  s6.addText(t.title, {
-    x: x + 0.1, y: y + 1.05, w: 1.35, h: 0.5,
-    fontSize: 9.5, fontFace: FONTS.heading, bold: true, color: C.white, align: 'center', valign: 'middle'
-  });
-
-  // Description
-  s6.addText(t.desc, {
-    x: x + 0.1, y: y + 1.6, w: 1.35, h: 2.0,
-    fontSize: 8.5, fontFace: FONTS.body, color: C.textLight, align: 'center', valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 7: PARENT JOURNEY
-// =========================================================================
-const s7 = pptx.addSlide();
-applySlideHeader(s7, 'User Journey', 'Parent & Student Journey', 'A transparent, stress-free experience from tutor discovery to ongoing progress reporting.');
-
-const parentSteps = [
-  { step: '1', title: 'Register Account', desc: 'Sign up with verified email & mobile number.' },
-  { step: '2', title: 'Add Child Profiles', desc: 'Configure student grade (1-12), board (CBSE/ICSE) & school.' },
-  { step: '3', title: 'Post Requirement', desc: 'Specify subjects, locality, budget range, and preferred days.' },
-  { step: '4', title: 'Admin Dispatches Lead', desc: 'Requirement is validated and published to verified tutor pool.' },
-  { step: '5', title: 'Candidate Assigned', desc: 'Admin matches the best-suited educator for evaluation.' },
-  { step: '6', title: 'Attend Demo Session', desc: 'Free trial class conducted online or at home.' },
-  { step: '7', title: 'Accept / Reject Decision', desc: 'Parent records binary feedback on the portal.' },
-  { step: '8', title: 'Full Access & Tuition', desc: 'Tutor contact coordinates revealed; attendance & report cards active.' },
-];
-
-parentSteps.forEach((p, idx) => {
-  const col = idx % 4;
-  const row = Math.floor(idx / 4);
-  const x = 0.8 + col * 2.98;
-  const y = 1.9 + row * 2.2;
-
-  s7.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 2.85, h: 2.0,
-    rectRadius: 0.12,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s7.addShape(pptx.ShapeType.ellipse, {
-    x: x + 0.15, y: y + 0.15, w: 0.35, h: 0.35,
-    fill: { color: C.goldPrimary }
-  });
-  s7.addText(p.step, {
-    x: x + 0.15, y: y + 0.15, w: 0.35, h: 0.35,
-    fontSize: 9, fontFace: FONTS.body, bold: true, color: C.navyDark, align: 'center', valign: 'middle'
-  });
-
-  s7.addText(p.title, {
-    x: x + 0.55, y: y + 0.12, w: 2.15, h: 0.4,
-    fontSize: 11, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-  });
-
-  s7.addText(p.desc, {
-    x: x + 0.15, y: y + 0.6, w: 2.55, h: 1.3,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-// Privacy Guarantee Callout Box
-s7.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 6.25, w: 11.73, h: 0.6,
-  rectRadius: 0.1,
-  fill: { color: C.navyDark },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s7.addText('🔒 PRIVACY GUARANTEE: Parents do not receive unrestricted tutor contact coordinates before formal assignment and accepted demo confirmation.', {
-  x: 1.0, y: 6.25, w: 11.33, h: 0.6,
-  fontSize: 10, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 8: TUTOR JOURNEY & SUBSCRIPTIONS
-// =========================================================================
-const s8 = pptx.addSlide();
-applySlideHeader(s8, 'Educator Journey', 'Educator Journey & Multi-Tuition Passes', 'Onboarding verified teachers, discovering assignments, and managing multi-tuition tiers.');
-
-// Left Column: Step-by-Step Flow
-const tutorSteps = [
-  '1. Onboarding & KYC: Upload Aadhaar / Passport & Degree Certificates.',
-  '2. Agreement Acceptance: Review and accept tutor code of conduct.',
-  '3. Admin Audit: Admin approves tutor profile after credential verification.',
-  '4. Browse & Apply: Discover nearby student leads filtered by locality.',
-  '5. Conduct Demo: Deliver free trial session and await parent decision.',
-  '6. 50% Commission Desk: Submit 1st month commission proof for active classes.',
-  '7. Attendance & Reports: Log class topics, homework, and monthly scores.'
-];
-
-s8.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.85, w: 6.0, h: 4.8,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.navyBorder, width: 1 }
-});
-s8.addText('🎓 EDUCATOR WORKFLOW', {
-  x: 1.0, y: 2.0, w: 5.6, h: 0.35,
-  fontSize: 13, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-});
-s8.addText(tutorSteps.join('\n\n'), {
-  x: 1.0, y: 2.45, w: 5.6, h: 4.0,
-  fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Right Column: Subscription Requirement (SRS Tier Table)
-s8.addShape(pptx.ShapeType.roundRect, {
-  x: 7.1, y: 1.85, w: 5.43, h: 4.8,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s8.addText('💳 MULTI-TUITION SUBSCRIPTION PASSES', {
-  x: 7.3, y: 2.0, w: 5.0, h: 0.35,
-  fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-});
-s8.addText('Tutors taking 2 or more concurrent tuitions require an active subscription tier as mandated by the SRS:', {
-  x: 7.3, y: 2.4, w: 5.0, h: 0.5,
-  fontSize: 9.5, fontFace: FONTS.body, color: C.white, valign: 'top'
-});
-
-const subPlans = [
-  { term: '3 Months Pass', fee: '₹300', desc: 'Valid for 90 days concurrent applications' },
-  { term: '6 Months Pass', fee: '₹600', desc: 'Valid for 180 days concurrent applications' },
-  { term: '9 Months Pass', fee: '₹900', desc: 'Valid for 270 days concurrent applications' },
-  { term: '12 Months Pass', fee: '₹1200', desc: 'Annual pass for unlimited concurrent tuitions' },
-];
-
-subPlans.forEach((plan, idx) => {
-  const py = 3.0 + idx * 0.85;
-  s8.addShape(pptx.ShapeType.roundRect, {
-    x: 7.3, y: py, w: 5.0, h: 0.72,
-    rectRadius: 0.1,
-    fill: { color: C.navyDark },
-    line: { color: C.navyBorder, width: 1 }
-  });
-  s8.addText(plan.term, {
-    x: 7.45, y: py + 0.08, w: 2.5, h: 0.3,
-    fontSize: 10.5, fontFace: FONTS.heading, bold: true, color: C.goldLight, valign: 'middle'
-  });
-  s8.addText(plan.fee, {
-    x: 10.8, y: py + 0.08, w: 1.3, h: 0.3,
-    fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.greenBadge, align: 'right', valign: 'middle'
-  });
-  s8.addText(plan.desc, {
-    x: 7.45, y: py + 0.38, w: 4.6, h: 0.25,
-    fontSize: 8.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 9: TUITION CENTER MANAGEMENT
-// =========================================================================
-const s9 = pptx.addSlide();
-applySlideHeader(s9, 'Institutional Module', 'Dedicated Tuition Center Management', 'An enterprise portal enabling coaching centers to automate classes 1–10 batches, attendance & fees.');
-
-const centerModules = [
-  {
-    icon: '🏢',
-    title: 'Classes 1–10 Batch Architecture',
-    desc: 'Create academic batches per grade (Class 1 to Class 10), assign subject faculty, configure batch timings, and enforce capacity caps.'
-  },
-  {
-    icon: '👥',
-    title: 'Student Roster Management',
-    desc: 'Enroll students, assign them to specific batches, track guardian contacts, and monitor active/inactive enrollment statuses.'
-  },
-  {
-    icon: '📅',
-    title: 'Daily Batch Attendance',
-    desc: 'Streamlined daily attendance registers (Present, Absent, Late) across all enrolled batch students with historical logs.'
-  },
-  {
-    icon: '📊',
-    title: 'Unit Test & Exam Performance',
-    desc: 'Record periodic unit test marks, subject averages, top ranks, and generate parent-facing academic performance cards.'
-  },
-  {
-    icon: '💰',
-    title: 'Monthly Fee Ledger',
-    desc: 'Track monthly fee collection statuses (Paid vs Pending) per student with complete payment method and date records.'
-  },
-  {
-    icon: '💬',
-    title: '1-Click WhatsApp Reminders',
-    desc: 'Trigger pre-formatted WhatsApp payment reminders directly to parent mobile numbers in one click for overdue fees.'
-  }
-];
-
-centerModules.forEach((m, idx) => {
-  const col = idx % 3;
-  const row = Math.floor(idx / 3);
-  const x = 0.8 + col * 3.97;
-  const y = 1.9 + row * 2.2;
-
-  s9.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 3.8, h: 2.0,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s9.addText(`${m.icon}  ${m.title}`, {
-    x: x + 0.2, y: y + 0.15, w: 3.4, h: 0.4,
-    fontSize: 11, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-  });
-
-  s9.addText(m.desc, {
-    x: x + 0.2, y: y + 0.55, w: 3.4, h: 1.3,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-// Center Faculty Hiring Callout
-s9.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 6.35, w: 11.73, h: 0.55,
-  rectRadius: 0.1,
-  fill: { color: C.navyDark },
-  line: { color: C.purpleBadge, width: 1 }
-});
-s9.addText('🌟 FACULTY RECRUITMENT DESK: Tuition centers can submit requests to Admin for qualified subject tutors and specialized educators directly from the verified tutor pool.', {
-  x: 1.0, y: 6.35, w: 11.33, h: 0.55,
-  fontSize: 9.5, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 10: ADMIN CONTROL CENTER
-// =========================================================================
-const s10 = pptx.addSlide();
-applySlideHeader(s10, 'Central Governance', 'Centralized Admin Control Center', 'The single operational authority for verification, matching, assignments, and platform earnings.');
-
-const adminDesks = [
-  { name: '📊 Executive KPI Dashboard', desc: 'Global platform metrics: requirements, active tuitions, verified tutors, and centers.' },
-  { name: '🛡️ Educator KYC Audit Desk', desc: 'Review government ID cards and degree memos; approve/reject with feedback.' },
-  { name: '🏢 Center Accreditation Desk', desc: 'Audit institutional registration certificates and trade licenses.' },
-  { name: '📑 Lead Matching & Dispatch', desc: 'Review incoming parent requirements and audit tutor applications.' },
-  { name: '📅 Demo Coordination Console', desc: 'Schedule evaluation demos and relay parent decisions to educators.' },
-  { name: '💵 50% Commission Desk', desc: 'Audit tutor UPI payment screenshots; 1-click approval unlocks mutual contacts.' },
-  { name: '💳 Subscription Approval Desk', desc: 'Verify 3, 6, 9, 12-month pass payments and activate unlimited applications.' },
-  { name: '📈 Financial Intelligence Ledger', desc: 'Unified ledger tracking all platform revenue streams with receipt view.' },
-  { name: '💬 Multi-Channel Support Chat', desc: 'Real-time WebSocket messaging hub communicating with all platform roles.' },
-  { name: '🔍 Security Audit Trail', desc: 'Immutable log of all administrative actions, KYC decisions, and financial events.' },
-];
-
-adminDesks.forEach((d, idx) => {
-  const col = idx % 2;
-  const row = Math.floor(idx / 2);
-  const x = 0.8 + col * 5.95;
-  const y = 1.9 + row * 0.95;
-
-  s10.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 5.78, h: 0.82,
-    rectRadius: 0.1,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s10.addText(d.name, {
-    x: x + 0.2, y: y + 0.08, w: 5.38, h: 0.3,
-    fontSize: 10.5, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-  });
-
-  s10.addText(d.desc, {
-    x: x + 0.2, y: y + 0.38, w: 5.38, h: 0.38,
-    fontSize: 8.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 11: TRUST & SECURITY
-// =========================================================================
-const s11 = pptx.addSlide();
-applySlideHeader(s11, 'Security Architecture', 'Built Around Trust & Controlled Access', 'Rigorous data privacy, credential verification, and role-based boundaries.');
-
-const securityPillars = [
-  {
-    icon: '🛡️',
-    title: 'KYC Document Verification',
-    desc: 'Government ID proofs (Aadhaar / Passport) and educational degree memos are verified by Admin before tutors can apply for leads.'
-  },
-  {
-    icon: '🔐',
-    title: 'Mutual Contact Redaction',
-    desc: 'Tutors and parents cannot view phone numbers, emails, or residential addresses until a demo is accepted and fee is verified.'
-  },
-  {
-    icon: '👥',
-    title: 'Role-Based Access Control',
-    desc: 'Strict JWT authentication and authorization middleware enforce complete isolation between Parent, Tutor, Center, and Admin portals.'
-  },
-  {
-    icon: '📁',
-    title: 'Protected Document Storage',
-    desc: 'Sensitive KYC documents and transaction screenshots are stored privately and accessible only via authenticated JWT session routes.'
-  },
-  {
-    icon: '🔑',
-    title: 'Password Security Standards',
-    desc: 'User credentials are protected using salted BCrypt password hashing, preventing exposure during authentication.'
-  },
-  {
-    icon: '📋',
-    title: 'Immutable Audit Logging',
-    desc: 'Every administrative decision, KYC approval, status update, and financial transaction is permanently logged with timestamps & IPs.'
-  }
-];
-
-securityPillars.forEach((p, idx) => {
-  const col = idx % 3;
-  const row = Math.floor(idx / 3);
-  const x = 0.8 + col * 3.97;
-  const y = 1.9 + row * 2.45;
-
-  s11.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 3.8, h: 2.25,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s11.addText(`${p.icon}  ${p.title}`, {
-    x: x + 0.2, y: y + 0.2, w: 3.4, h: 0.45,
-    fontSize: 11.5, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-  });
-
-  s11.addText(p.desc, {
-    x: x + 0.2, y: y + 0.7, w: 3.4, h: 1.4,
-    fontSize: 10, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 12: PAYMENT & COMMISSION WORKFLOW
-// =========================================================================
-const s12 = pptx.addSlide();
-applySlideHeader(s12, 'Financial Governance', 'Simple, Transparent Payment Verification', 'Controlled manual UPI verification workflows for tutor subscriptions and first-month commissions.');
-
-// Left Card: Tutor Subscription
-s12.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.85, w: 5.75, h: 4.1,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.navyBorder, width: 1 }
-});
-s12.addText('💳 TUTOR MULTI-TUITION SUBSCRIPTION', {
-  x: 1.0, y: 2.0, w: 5.35, h: 0.35,
-  fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-});
-const subSteps = [
-  '1. Tutor selects 3, 6, 9, or 12-month pass (₹300 - ₹1200).',
-  '2. Makes external UPI payment via QR code.',
-  '3. Submits UPI Transaction ID (UTR) & payment screenshot.',
-  '4. Admin verifies payment receipt on Subscription Desk.',
-  '5. Subscription is activated; multi-application pass enabled.'
-];
-s12.addText(subSteps.join('\n\n'), {
-  x: 1.0, y: 2.45, w: 5.35, h: 3.3,
-  fontSize: 10, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Right Card: 50% First-Month Commission
-s12.addShape(pptx.ShapeType.roundRect, {
-  x: 6.78, y: 1.85, w: 5.75, h: 4.1,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.navyBorder, width: 1 }
-});
-s12.addText('💵 50% FIRST-MONTH COMMISSION WORKFLOW', {
-  x: 7.0, y: 2.0, w: 5.35, h: 0.35,
-  fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-});
-const commSteps = [
-  '1. Tutor conducts demo; Parent marks assignment Accepted.',
-  '2. Tutor receives first-month tuition fee from parent.',
-  '3. Tutor pays 50% one-time commission to Admin via UPI.',
-  '4. Tutor uploads payment proof screenshot & UTR number.',
-  '5. Admin approves commission; tuition status marked Active.'
-];
-s12.addText(commSteps.join('\n\n'), {
-  x: 7.0, y: 2.45, w: 5.35, h: 3.3,
-  fontSize: 10, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Critical Note
-s12.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 6.15, w: 11.73, h: 0.7,
-  rectRadius: 0.1,
-  fill: { color: C.navyDark },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s12.addText('⚠️ IMPORTANT FINANCIAL NOTE: Regular monthly tuition fee payments between parents and tutors take place directly outside the platform. The platform handles only tutor subscriptions and first-month commissions.', {
-  x: 1.0, y: 6.15, w: 11.33, h: 0.7,
-  fontSize: 9.5, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 13: CENTRALIZED COMMUNICATION
-// =========================================================================
-const s13 = pptx.addSlide();
-applySlideHeader(s13, 'Communication Hub', 'Centralized Communication Channels', 'Two clearly separated communication mediums designed for authenticated users and public inquiries.');
-
-// Channel 1: In-App Chat
-s13.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.9, w: 5.75, h: 4.8,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1.2 }
-});
-s13.addText('💬 CHANNEL 1: REAL-TIME IN-APP CHAT', {
-  x: 1.1, y: 2.1, w: 5.15, h: 0.4,
-  fontSize: 13, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-});
-s13.addText('• Purpose: Secure, authenticated operational messaging.\n• Technology: Socket.IO WebSockets with JWT handshake.\n• Direct Channels:\n   - 👨‍👩‍👧 Parent ↔ 👑 Admin (Academic counseling & demo feedback)\n   - 🎓 Tutor ↔ 👑 Admin (Lead clarification & commission support)\n   - 🏢 Center ↔ 👑 Admin (Faculty requests & accreditation)\n• Features: Instant messaging, unread badges, typing indicators.', {
-  x: 1.1, y: 2.65, w: 5.15, h: 3.8,
-  fontSize: 10.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Channel 2: WhatsApp Widget
-s13.addShape(pptx.ShapeType.roundRect, {
-  x: 6.78, y: 1.9, w: 5.75, h: 4.8,
-  rectRadius: 0.15,
-  fill: { color: C.navyCard },
-  line: { color: C.greenBadge, width: 1.2 }
-});
-s13.addText('📱 CHANNEL 2: PUBLIC WHATSAPP INQUIRY', {
-  x: 7.08, y: 2.1, w: 5.15, h: 0.4,
-  fontSize: 13, fontFace: FONTS.heading, bold: true, color: C.greenBadge, valign: 'middle'
-});
-s13.addText('• Purpose: Pre-registration public inquiries & instant support.\n• Integration: Floating WhatsApp widget on public marketing pages.\n• User Flow:\n   - Prospective parents & tutors click the WhatsApp badge.\n   - Redirects to WhatsApp with a pre-filled inquiry template.\n   - Connects directly to Smart Minds Tuitions official admin desk.\n• Distinction: WhatsApp and In-App Chat operate as separate channels.', {
-  x: 7.08, y: 2.65, w: 5.15, h: 3.8,
-  fontSize: 10.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-
-// =========================================================================
-// SLIDE 14: TECHNOLOGY ARCHITECTURE
-// =========================================================================
-const s14 = pptx.addSlide();
-applySlideHeader(s14, 'System Engineering', 'Technology Architecture', 'A modern, modular full-stack stack engineered for reliability, responsiveness, and zero-setup deployment.');
-
-const techLayers = [
-  {
-    layer: 'FRONTEND CLIENT',
-    tech: 'React 18 + Vite + Tailwind CSS',
-    desc: 'Single-page application (SPA), Lucide icons, responsive navigation, and role-based portal routing.'
-  },
-  {
-    layer: 'BACKEND API SERVER',
-    tech: 'Node.js + Express.js REST API',
-    desc: 'Modular controllers, RBAC middleware, privacy redaction pipelines, and protected document routes.'
-  },
-  {
-    layer: 'REAL-TIME WEBSOCKETS',
-    tech: 'Socket.IO (v4)',
-    desc: 'Bi-directional authenticated event gateway for live support messaging, typing indicators, and notifications.'
-  },
-  {
-    layer: 'DATABASE & DUAL ENGINE',
-    tech: 'MongoDB + In-Memory Fallback',
-    desc: 'Mongoose ORM schemas with automatic zero-config in-memory MongoDB failover engine for rapid development.'
-  },
-  {
-    layer: 'SECURITY & ENCRYPTION',
-    tech: 'JWT + BCrypt + Helmet',
-    desc: 'Cryptographic token authentication, salted password hashing, NoSQL query sanitization, and rate limiting.'
-  }
-];
-
-techLayers.forEach((t, idx) => {
-  const y = 1.85 + idx * 0.98;
-
-  s14.addShape(pptx.ShapeType.roundRect, {
-    x: 0.8, y, w: 11.73, h: 0.85,
-    rectRadius: 0.1,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  // Layer Tag
-  s14.addShape(pptx.ShapeType.roundRect, {
-    x: 1.0, y: y + 0.15, w: 2.5, h: 0.55,
-    rectRadius: 0.08,
-    fill: { color: C.navyDark },
-    line: { color: C.goldPrimary, width: 1 }
-  });
-  s14.addText(t.layer, {
-    x: 1.0, y: y + 0.15, w: 2.5, h: 0.55,
-    fontSize: 9.5, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-  });
-
-  s14.addText(t.tech, {
-    x: 3.7, y: y + 0.12, w: 4.0, h: 0.35,
-    fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-  });
-
-  s14.addText(t.desc, {
-    x: 3.7, y: y + 0.45, w: 8.5, h: 0.35,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 15: SYSTEM ARCHITECTURE
-// =========================================================================
-const s15 = pptx.addSlide();
-applySlideHeader(s15, 'Ecosystem Topology', 'Platform Ecosystem & Security Architecture', 'High-level architectural topology showing authenticated role interfaces and backend service modules.');
-
-// Diagram Container
-s15.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 1.85, w: 11.73, h: 4.9,
-  rectRadius: 0.15,
-  fill: { color: C.navyDark },
-  line: { color: C.navyBorder, width: 1 }
-});
-
-// Top: 3 User Portals
-const userPortals = [
-  { name: '👨‍👩‍👧 Parent Portal', route: '/parent/*', col: C.blueBadge, x: 1.2 },
-  { name: '🎓 Educator Portal', route: '/tutor/*', col: C.greenBadge, x: 4.9 },
-  { name: '🏢 Tuition Center', route: '/center/*', col: C.purpleBadge, x: 8.6 },
-];
-
-userPortals.forEach(p => {
-  s15.addShape(pptx.ShapeType.roundRect, {
-    x: p.x, y: 2.1, w: 3.4, h: 0.9,
-    rectRadius: 0.1,
-    fill: { color: C.navyCard },
-    line: { color: p.col, width: 1.2 }
-  });
-  s15.addText(p.name, {
-    x: p.x, y: 2.15, w: 3.4, h: 0.4,
-    fontSize: 11, fontFace: FONTS.heading, bold: true, color: C.white, align: 'center', valign: 'middle'
-  });
-  s15.addText(`Protected Route: ${p.route}`, {
-    x: p.x, y: 2.55, w: 3.4, h: 0.35,
-    fontSize: 9, fontFace: FONTS.body, color: C.goldLight, align: 'center', valign: 'middle'
-  });
-});
-
-// Middle: Central Admin Authority Hub
-s15.addShape(pptx.ShapeType.roundRect, {
-  x: 2.8, y: 3.3, w: 7.73, h: 1.4,
-  rectRadius: 0.12,
-  fill: { color: C.navyCard },
-  line: { color: C.goldPrimary, width: 1.5 }
-});
-s15.addText('👑 CENTRAL ADMIN GATEWAY & REST API CONTROLLERS', {
-  x: 3.0, y: 3.4, w: 7.33, h: 0.35,
-  fontSize: 12, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, align: 'center', valign: 'middle'
-});
-
-const adminServices = [
-  '• KYC Document Audit',
-  '• Lead Dispatch & Matching',
-  '• Demo Coordination',
-  '• 50% Commission Desk',
-  '• Subscription Pass Manager',
-  '• Socket.IO Live Chat Server'
-];
-s15.addText(adminServices.slice(0, 3).join('\n'), {
-  x: 3.2, y: 3.8, w: 3.4, h: 0.8,
-  fontSize: 9, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-s15.addText(adminServices.slice(3, 6).join('\n'), {
-  x: 6.8, y: 3.8, w: 3.4, h: 0.8,
-  fontSize: 9, fontFace: FONTS.body, color: C.textLight, valign: 'top'
-});
-
-// Bottom: MongoDB Data & Storage Layer
-s15.addShape(pptx.ShapeType.roundRect, {
-  x: 2.8, y: 5.0, w: 7.73, h: 1.4,
-  rectRadius: 0.12,
-  fill: { color: C.navyCard },
-  line: { color: C.navyBorder, width: 1 }
-});
-s15.addText('💾 MONGODB DATABASE & PROTECTED STORAGE LAYER', {
-  x: 3.0, y: 5.1, w: 7.33, h: 0.35,
-  fontSize: 11.5, fontFace: FONTS.heading, bold: true, color: C.white, align: 'center', valign: 'middle'
-});
-s15.addText('Collections: Users • Profiles • TuitionRequirements • Applications • Demos • Assignments • Attendance • MonthlyReports • Batches • FeeLedgers • Subscriptions • AuditLogs', {
-  x: 3.1, y: 5.5, w: 7.13, h: 0.75,
-  fontSize: 9, fontFace: FONTS.body, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 16: KEY FEATURES (Icon Grid)
-// =========================================================================
-const s16 = pptx.addSlide();
-applySlideHeader(s16, 'Feature Matrix', 'Core Platform Capabilities', '16 core functional capabilities engineered to meet the complete SRS specification.');
-
-const coreFeatures = [
-  { icon: '✓', title: 'Tutor KYC Verification' },
-  { icon: '✓', title: 'Parent Registration' },
-  { icon: '✓', title: 'Tuition Requirements' },
-  { icon: '✓', title: 'Tutor Applications' },
-  { icon: '✓', title: 'Admin Lead Matching' },
-  { icon: '✓', title: 'Evaluation Demo Classes' },
-  { icon: '✓', title: 'Tutor Assignments' },
-  { icon: '✓', title: 'Lesson Attendance Ledger' },
-  { icon: '✓', title: 'Monthly Progress Reports' },
-  { icon: '✓', title: 'Tuition Center Batches' },
-  { icon: '✓', title: 'Multi-Tuition Passes' },
-  { icon: '✓', title: '50% Commission Desk' },
-  { icon: '✓', title: 'Real-Time Admin Chat' },
-  { icon: '✓', title: 'WhatsApp Reminder Triggers' },
-  { icon: '✓', title: 'Role-Based Access Control' },
-  { icon: '✓', title: 'Protected Document Desk' },
-];
-
-coreFeatures.forEach((f, idx) => {
-  const col = idx % 4;
-  const row = Math.floor(idx / 4);
-  const x = 0.8 + col * 2.98;
-  const y = 1.9 + row * 1.2;
-
-  s16.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 2.85, h: 1.05,
-    rectRadius: 0.1,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s16.addShape(pptx.ShapeType.ellipse, {
-    x: x + 0.15, y: y + 0.3, w: 0.45, h: 0.45,
-    fill: { color: C.greenBadge }
-  });
-  s16.addText(f.icon, {
-    x: x + 0.15, y: y + 0.3, w: 0.45, h: 0.45,
-    fontSize: 12, fontFace: FONTS.body, bold: true, color: C.white, align: 'center', valign: 'middle'
-  });
-
-  s16.addText(f.title, {
-    x: x + 0.7, y: y + 0.15, w: 2.0, h: 0.75,
-    fontSize: 10.5, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 17: USER EXPERIENCE DESIGN (Device & Portal UI)
-// =========================================================================
-const s17 = pptx.addSlide();
-applySlideHeader(s17, 'Interface Experience', 'Designed per User Persona', 'Contextual dashboards crafted specifically for parents, educators, center directors, and administrators.');
-
-const uxPanels = [
-  {
-    role: '👨‍👩‍👧 PARENT DASHBOARD',
-    metric1: 'Active Requirements',
-    metric2: 'Scheduled Demo Sessions',
-    metric3: 'Assigned Tutors',
-    metric4: 'Monthly Report Cards'
-  },
-  {
-    role: '🎓 EDUCATOR DASHBOARD',
-    metric1: 'Nearby Student Leads',
-    metric2: 'Submitted Applications',
-    metric3: 'Active Tuitions',
-    metric4: 'Monthly Attendance Register'
-  },
-  {
-    role: '🏢 TUITION CENTER DESK',
-    metric1: 'Class 1–10 Batches',
-    metric2: 'Enrolled Student Rosters',
-    metric3: 'Daily Attendance Marked',
-    metric4: 'Monthly Fee Dues Ledger'
-  },
-  {
-    role: '👑 ADMIN CONTROL ROOM',
-    metric1: 'Pending Tutor KYC Audits',
-    metric2: '50% Commission Proofs',
-    metric3: 'Multi-Tuition Passes',
-    metric4: 'Live Support Conversations'
-  }
-];
-
-uxPanels.forEach((p, idx) => {
-  const col = idx % 2;
-  const row = Math.floor(idx / 2);
-  const x = 0.8 + col * 5.95;
-  const y = 1.9 + row * 2.45;
-
-  s17.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 5.78, h: 2.25,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-
-  s17.addText(p.role, {
-    x: x + 0.2, y: y + 0.15, w: 5.38, h: 0.35,
-    fontSize: 11.5, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
-  });
-
-  const metrics = [p.metric1, p.metric2, p.metric3, p.metric4];
-  metrics.forEach((m, mIdx) => {
-    const mCol = mIdx % 2;
-    const mRow = Math.floor(mIdx / 2);
-    const mx = x + 0.2 + mCol * 2.75;
-    const my = y + 0.6 + mRow * 0.75;
-
-    s17.addShape(pptx.ShapeType.roundRect, {
-      x: mx, y: my, w: 2.65, h: 0.65,
-      rectRadius: 0.08,
-      fill: { color: C.navyDark },
-      line: { color: C.navyBorder, width: 1 }
+  const pillars = [
+    ['ADMIN-VERIFIED TUTORS', 'Government ID and degree audit before lead matching.'],
+    ['MUTUAL PRIVACY DESK', 'No contact leakage before accepted demo confirmation.'],
+    ['STRUCTURED DEMO FLOW', 'Free evaluation class with binary parent feedback.'],
+    ['COACHING CENTER DESK', 'Class 1–10 batches, attendance and WhatsApp fees.'],
+  ];
+  pillars.forEach(([title, desc], i) => {
+    const x = 1.3 + i * 2.73;
+    addCard(slide, x, 4.27, 2.55, 1.78);
+    slide.addText(title, {
+      x: x + 0.15, y: 4.46, w: 2.25, h: 0.32,
+      fontFace: F.heading, fontSize: 9.2, bold: true,
+      color: C.gold, margin: 0,
     });
-    s17.addText(m, {
-      x: mx + 0.1, y: my + 0.08, w: 2.45, h: 0.5,
-      fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, align: 'center', valign: 'middle'
+    slide.addText(desc, {
+      x: x + 0.15, y: 4.86, w: 2.25, h: 0.9,
+      fontFace: F.body, fontSize: 8.8, color: C.textLight,
+      margin: 0, valign: 'top',
     });
   });
-});
+  slide.addText('Platform Architecture & Technical Specification Overview  •  Client Ready Presentation', {
+    x: 0.8, y: 6.98, w: 11.73, h: 0.25,
+    fontFace: F.body, fontSize: 8.5, color: C.textMuted,
+    align: 'center', margin: 0,
+  });
+}
 
-
-// =========================================================================
-// SLIDE 18: RESPONSIVE PLATFORM
-// =========================================================================
-const s18 = pptx.addSlide();
-applySlideHeader(s18, 'Accessibility', 'Accessible Across Devices', 'A responsive web application accessible across desktop monitors, laptops, tablets, and smartphones.');
-
-const devices = [
-  {
-    name: '🖥️ Desktop & Laptops',
-    desc: 'Optimized for high-productivity workflows: Admin control room, center batch registers, multi-column requirement browsing, and attendance tables.'
-  },
-  {
-    name: '📱 Tablets & iPads',
-    desc: 'Fluid touch navigation for parents reviewing tutor credentials, checking scheduled demo dates, and approving monthly student report cards.'
-  },
-  {
-    name: '📲 Mobile Browsers',
-    desc: 'Instant access on iOS and Android browsers for tutors marking daily class attendance on-the-go and parents receiving WhatsApp reminders.'
-  }
-];
-
-devices.forEach((d, idx) => {
-  const x = 0.8 + idx * 3.97;
-  const y = 1.9;
-
-  s18.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 3.8, h: 3.8,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+// -----------------------------------------------------------------------------
+// 02 — THE VISION
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 2, 'Executive Overview', 'The Vision', 'One platform. Four distinct user roles. One centrally governed tutoring ecosystem.');
+  addCard(slide, 0.8, 1.85, 11.73, 0.75, { line: C.gold });
+  slide.addText('Smart Minds Tuitions bridges the coordination gap between parents seeking verified educators, qualified tutors looking for sustainable teaching opportunities, and tuition centers managing student batches.', {
+    x: 1.02, y: 1.85, w: 11.29, h: 0.75,
+    fontFace: F.body, fontSize: 11, color: C.white,
+    align: 'center', valign: 'middle', margin: 0,
   });
 
-  s18.addText(d.name, {
-    x: x + 0.2, y: y + 0.3, w: 3.4, h: 0.45,
-    fontSize: 13, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, align: 'center', valign: 'middle'
+  const left = [
+    ['STUDENT PORTAL', C.blue, 'PARENTS & STUDENTS', 'Access KYC-verified tutors, post home or online requirements, evaluate educators through free trial sessions, and track attendance and monthly report cards.'],
+    ['INSTITUTION DESK', C.purple, 'TUITION CENTERS', 'Automate Classes 1–10 batch rosters, daily attendance, test marks, WhatsApp fee reminders, and verified faculty hiring.'],
+  ];
+  const right = [
+    ['TEACHER PORTAL', C.green, 'VERIFIED EDUCATORS', 'Complete KYC verification, browse nearby student leads, submit applications, conduct demos, and manage active student attendance ledgers.'],
+    ['SUPER ADMIN', C.amber, 'CENTRAL GOVERNANCE', 'Maintain operational integrity, audit applications, coordinate demos, verify fee submissions, and review financial earnings ledgers.'],
+  ];
+  [...left.map((item, i) => ({ item, x: 0.8, y: 2.8 + i * 2.0 })), ...right.map((item, i) => ({ item, x: 8.88, y: 2.8 + i * 2.0 }))].forEach(({ item, x, y }) => {
+    const [badge, badgeColor, title, desc] = item;
+    addCard(slide, x, y, 3.65, 1.85);
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: x + 0.2, y: y + 0.15, w: 1.3, h: 0.22, rectRadius: 0.05,
+      fill: { color: badgeColor }, line: { color: badgeColor, width: 0.5 },
+    });
+    slide.addText(badge, {
+      x: x + 0.2, y: y + 0.15, w: 1.3, h: 0.22,
+      fontFace: F.body, fontSize: 7.3, bold: true, color: C.white,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.43, w: 3.2, h: 0.3,
+      fontFace: F.heading, fontSize: 10.8, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.78, w: 3.25, h: 0.9,
+      fontFace: F.body, fontSize: 8.5, color: C.textLight, margin: 0,
+    });
   });
 
-  s18.addText(d.desc, {
-    x: x + 0.3, y: y + 1.0, w: 3.2, h: 2.4,
-    fontSize: 10.5, fontFace: FONTS.body, color: C.textLight, align: 'center', valign: 'top'
+  addCard(slide, 4.65, 2.8, 4.03, 3.85, { fill: C.navyElevated, line: C.gold, lineWidth: 1.5 });
+  slide.addImage({ path: LOGO, x: 5.97, y: 3.02, w: 1.4, h: 1.4 });
+  slide.addText('CENTRAL ADMIN AUTHORITY', {
+    x: 4.85, y: 4.48, w: 3.63, h: 0.34,
+    fontFace: F.heading, fontSize: 11.3, bold: true,
+    color: C.gold, align: 'center', margin: 0,
   });
-});
-
-s18.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 6.0, w: 11.73, h: 0.75,
-  rectRadius: 0.1,
-  fill: { color: C.navyDark },
-  line: { color: C.goldPrimary, width: 1 }
-});
-s18.addText('🌐 ZERO INSTALLATION FRICTION: Built as a modern Single Page Web Application (React SPA), users require no app store downloads and can log in securely from any standard web browser.', {
-  x: 1.0, y: 6.0, w: 11.33, h: 0.75,
-  fontSize: 10, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 19: CLIENT VALUE
-// =========================================================================
-const s19 = pptx.addSlide();
-applySlideHeader(s19, 'Strategic Impact', 'Value Delivered Across All Stakeholders', 'Delivering safety, operational efficiency, and revenue transparency to every user persona.');
-
-const stakeholderValues = [
-  {
-    title: 'FOR PARENTS & STUDENTS',
-    col: C.blueBadge,
-    bullets: [
-      'Verified educators with audited IDs and degrees',
-      'Zero upfront contact leakage or spam',
-      'Free evaluation demo before formal tuition',
-      'Continuous monthly progress and attendance logs'
-    ]
-  },
-  {
-    title: 'FOR QUALIFIED TUTORS',
-    col: C.greenBadge,
-    bullets: [
-      'Direct discovery of genuine nearby tuition leads',
-      'Professional credential verification badges',
-      'Multi-tuition subscription passes for scale',
-      'Transparent 50% commission verification desk'
-    ]
-  },
-  {
-    title: 'FOR TUITION CENTERS',
-    col: C.purpleBadge,
-    bullets: [
-      'Classes 1–10 batch configuration and caps',
-      'Paperless daily attendance and test ledgers',
-      '1-Click WhatsApp payment reminders to parents',
-      'Direct faculty hiring requests from verified pool'
-    ]
-  },
-  {
-    title: 'FOR PLATFORM OWNERS',
-    col: C.amberBadge,
-    bullets: [
-      'Total administrative control over matching',
-      'Multi-stream revenue (commissions + subscriptions)',
-      'Immutable security and financial audit trail',
-      'Integrated real-time support chat desk'
-    ]
-  }
-];
-
-stakeholderValues.forEach((v, idx) => {
-  const col = idx % 2;
-  const row = Math.floor(idx / 2);
-  const x = 0.8 + col * 5.95;
-  const y = 1.9 + row * 2.45;
-
-  s19.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 5.78, h: 2.25,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+  slide.addText('• Strict KYC credential verification\n• Private contact redaction engine\n• Admin-relayed demo matching\n• 50% commission and subscription audits\n• Real-time support chat console', {
+    x: 4.95, y: 4.92, w: 3.43, h: 1.45,
+    fontFace: F.body, fontSize: 8.8, color: C.textLight,
+    align: 'center', margin: 0,
   });
+}
 
-  s19.addText(v.title, {
-    x: x + 0.2, y: y + 0.15, w: 5.38, h: 0.35,
-    fontSize: 11.5, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
+// -----------------------------------------------------------------------------
+// 03 — CHALLENGES
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 3, 'Market Challenge', 'Challenges in the Traditional Tuition Process', 'Key friction points faced by parents, educators, and coaching centers in unmanaged environments.');
+  const problems = [
+    ['01', 'Unverified Tutor Credentials', 'Parents struggle to verify background, educational qualifications, and identity proofs of private home tutors, risking quality and safety.'],
+    ['02', 'Uncontrolled Contact Sharing', 'Open directories expose private phone numbers and home addresses prematurely, leading to unsolicited calls, spam, and privacy risks.'],
+    ['03', 'Disorganized Demo Evaluations', 'Lack of structured trial classes means parents have no standard way to evaluate teaching compatibility before committing to a tutor.'],
+    ['04', 'Fragmented Tutor Discovery', 'Qualified teachers lack a transparent platform to discover genuine student leads filtered by locality, board syllabus, and grade level.'],
+    ['05', 'Coaching Center Record Friction', 'Tuition centers rely on manual paper registers to manage Class 1–10 batches, attendance, test marks, and monthly fee dues.'],
+    ['06', 'Disputed Commission Settlements', 'Absence of an immutable audit trail for commissions, subscription passes, and fee verification creates operational disputes.'],
+  ];
+  problems.forEach(([num, title, desc], i) => {
+    const x = 0.8 + (i % 3) * 3.98;
+    const y = 1.9 + Math.floor(i / 3) * 2.45;
+    addCard(slide, x, y, 3.78, 2.25);
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: x + 0.2, y: y + 0.2, w: 0.55, h: 0.3, rectRadius: 0.05,
+      fill: { color: C.navyDark }, line: { color: C.gold, width: 1 },
+    });
+    slide.addText(num, {
+      x: x + 0.2, y: y + 0.2, w: 0.55, h: 0.3,
+      fontFace: F.body, fontSize: 9.5, bold: true, color: C.gold,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(title, {
+      x: x + 0.85, y: y + 0.18, w: 2.72, h: 0.36,
+      fontFace: F.heading, fontSize: 11.2, bold: true, color: C.white, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.67, w: 3.38, h: 1.38,
+      fontFace: F.body, fontSize: 9.3, color: C.textLight, margin: 0,
+    });
   });
+}
 
-  const bulletList = v.bullets.map(b => `✓  ${b}`).join('\n');
-  s19.addText(bulletList, {
-    x: x + 0.2, y: y + 0.55, w: 5.38, h: 1.55,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
+// -----------------------------------------------------------------------------
+// 04 — SOLUTION FLOW
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 4, 'Platform Solution', 'The Smart Minds Tuitions Solution', 'A controlled, admin-moderated marketplace designed for trust, privacy, and operational clarity.');
+  addCard(slide, 0.8, 1.85, 11.73, 0.7, { line: C.gold });
+  slide.addText('CONTROLLED MARKETPLACE MODEL: All student requirements, tutor applications, demo sessions, and contact coordinates flow through an authenticated Admin Verification & Matching Engine.', {
+    x: 1.0, y: 1.85, w: 11.33, h: 0.7,
+    fontFace: F.body, fontSize: 10, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
   });
-});
-
-
-// =========================================================================
-// SLIDE 20: PROJECT SCOPE
-// =========================================================================
-const s20 = pptx.addSlide();
-applySlideHeader(s20, 'Deliverables', 'Current Product Scope', 'A comprehensive inventory of fully engineered and verified deliverables based on the SRS.');
-
-const scopeCategories = [
-  {
-    title: 'FRONTEND MODULES',
-    items: ['Parent & Student Portal (8 Pages)', 'Educator & Tutor Portal (11 Pages)', 'Tuition Center Desk (8 Pages)', 'Super Admin Control Room (10 Pages)', 'Marketing Pages & 1-Click Login']
-  },
-  {
-    title: 'BACKEND SERVICES',
-    items: ['JWT Auth & RBAC Middleware', 'Contact Privacy Redaction Pipeline', 'Protected Document Storage Desk', 'Dual Engine (MongoDB + Memory Failover)', 'Socket.IO Real-Time Chat Server']
-  },
-  {
-    title: 'BUSINESS WORKFLOWS',
-    items: ['Tutor KYC Aadhaar/Degree Audit', 'Lead Posting & Tutor Applications', 'Evaluation Demo Class Lifecycle', '50% First-Month Commission Desk', '3/6/9/12-Month Subscription Passes']
-  },
-  {
-    title: 'INSTITUTIONAL TOOLS',
-    items: ['Classes 1–10 Batch Management', 'Daily Student Attendance Registers', 'Unit Test & Exam Score Ledgers', 'Monthly Fee Collection Tracking', '1-Click WhatsApp Parent Reminders']
-  }
-];
-
-scopeCategories.forEach((cat, idx) => {
-  const col = idx % 2;
-  const row = Math.floor(idx / 2);
-  const x = 0.8 + col * 5.95;
-  const y = 1.9 + row * 2.45;
-
-  s20.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 5.78, h: 2.25,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+  const steps = [
+    ['01', 'Requirement Posted', 'Parent specifies syllabus, grade, location and budget.'],
+    ['02', 'Admin Review', 'Requirement is validated and published to the verified pool.'],
+    ['03', 'Verified Tutor Pool', 'Only KYC-approved educators discover the lead.'],
+    ['04', 'Tutor Applications', 'Qualified educators submit structured applications.'],
+    ['05', 'Tutor Selection', 'Admin selects the optimal educator candidate.'],
+    ['06', 'Demo Scheduled', 'Free trial evaluation class coordinated by Admin.'],
+    ['07', 'Parent Decision', 'Binary decision recorded: Accepted or Rejected.'],
+    ['08', 'Fee Verification', 'Tutor submits 50% first-month commission proof.'],
+    ['09', 'Contacts Unlocked', 'Mutual phone numbers and address are revealed.'],
+    ['10', 'Tuition Begins', 'Classes begin with attendance and reports.'],
+  ];
+  steps.forEach(([num, title, desc], i) => {
+    const x = 0.8 + (i % 5) * 2.38;
+    const y = 2.75 + Math.floor(i / 5) * 2.0;
+    addCard(slide, x, y, 2.22, 1.82, { line: i === 6 || i === 8 ? C.gold : C.navyBorder });
+    addNumberBadge(slide, num, x + 0.15, y + 0.15, 0.32);
+    slide.addText(title, {
+      x: x + 0.53, y: y + 0.12, w: 1.53, h: 0.38,
+      fontFace: F.heading, fontSize: 9.3, bold: true, color: C.white, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.15, y: y + 0.59, w: 1.92, h: 1.08,
+      fontFace: F.body, fontSize: 8.35, color: C.textLight, margin: 0,
+    });
   });
+}
 
-  s20.addText(cat.title, {
-    x: x + 0.2, y: y + 0.15, w: 5.38, h: 0.35,
-    fontSize: 11.5, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
+// -----------------------------------------------------------------------------
+// 05 — FOUR USER EXPERIENCES
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 5, 'Role Architecture', 'One Platform. Four User Experiences.', 'Granular, role-based workflows tailored to parents, educators, centers, and platform administrators.');
+  const roles = [
+    ['STUDENT PORTAL', C.blue, 'PARENT / STUDENT', ['Multi-child profile registration (CBSE / ICSE)', 'Post home and online tuition requirements', 'Track scheduled evaluation demos', 'Accept or reject demo educators', 'Unlocked tutor contact coordinates', 'Real-time daily attendance registers', 'Monthly academic progress reports', 'Direct support chat with Admin']],
+    ['TEACHER PORTAL', C.green, 'EDUCATOR / TUTOR', ['Aadhaar and Degree KYC verification', 'Multi-class and subject teaching profile', 'Browse verified student requirements', 'Apply for assignments and demos', 'Active tuition operations and student details', 'Lesson attendance and topic registers', 'Submit monthly progress cards', 'Multi-Tuition Passes and commission desk']],
+    ['INSTITUTION DESK', C.purple, 'TUITION CENTER', ['Trade license and center registration audit', 'Class 1–10 batch creation and capacity caps', 'Student enrollment and batch assignment', 'Daily batch attendance registers', 'Unit test and exam performance ledgers', 'Monthly fee collection status tracking', '1-Click WhatsApp payment reminders', 'Hire verified subject faculty from Admin']],
+    ['CONTROL ROOM', C.amber, 'SUPER ADMIN', ['Executive KPI metrics and intelligence', 'Educator KYC document audit', 'Tuition center accreditation review', 'Requirement moderation and lead dispatch', 'Demo coordination and relay', '50% commission proof verification', 'Multi-Tuition Subscription activation', 'Real-time multi-channel support console']],
+  ];
+  roles.forEach(([badge, badgeColor, title, items], i) => {
+    const x = 0.8 + i * 2.98;
+    addCard(slide, x, 1.85, 2.8, 4.9);
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: x + 0.15, y: 2.0, w: 1.3, h: 0.22, rectRadius: 0.05,
+      fill: { color: badgeColor }, line: { color: badgeColor, width: 0.5 },
+    });
+    slide.addText(badge, {
+      x: x + 0.15, y: 2.0, w: 1.3, h: 0.22,
+      fontFace: F.body, fontSize: 7.2, bold: true, color: C.white,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(title, {
+      x: x + 0.15, y: 2.3, w: 2.5, h: 0.33,
+      fontFace: F.heading, fontSize: 10.4, bold: true, color: C.gold, margin: 0,
+    });
+    addBulletList(slide, items, x + 0.15, 2.75, 2.5, 3.72, { fontSize: 8.35 });
   });
+}
 
-  const list = cat.items.map(i => `• ${i}`).join('\n');
-  s20.addText(list, {
-    x: x + 0.2, y: y + 0.55, w: 5.38, h: 1.55,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
+// -----------------------------------------------------------------------------
+// 06 — SEVEN-STEP LIFECYCLE
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 6, 'Operational Lifecycle', 'How It Works — Step-by-Step Lifecycle', 'The standard operational timeline from account onboarding to active tuition delivery.');
+  const timeline = [
+    ['01', 'REGISTER', 'Parent, Tutor, or Tuition Center creates an account.'],
+    ['02', 'VERIFICATION', 'Admin audits Government ID and Degree certificates.'],
+    ['03', 'REQUIREMENT', 'Parent specifies subject, grade, locality and schedule.'],
+    ['04', 'MATCHING', 'Approved tutors browse leads and submit applications.'],
+    ['05', 'DEMO CLASS', 'Admin coordinates a free evaluation trial session.'],
+    ['06', 'CONFIRMATION', 'Parent accepts or rejects educator based on demo.'],
+    ['07', 'TUITION STARTS', 'Commission paid, contacts unlocked, classes begin.'],
+  ];
+  timeline.forEach(([num, title, desc], i) => {
+    const x = 0.8 + i * 1.7;
+    addCard(slide, x, 2.1, 1.55, 4.4, { line: i === 4 || i === 6 ? C.gold : C.navyBorder });
+    slide.addShape(pptx.ShapeType.ellipse, {
+      x: x + 0.45, y: 2.36, w: 0.65, h: 0.65,
+      fill: { color: C.navyDark }, line: { color: C.gold, width: 1.5 },
+    });
+    slide.addText(num, {
+      x: x + 0.45, y: 2.36, w: 0.65, h: 0.65,
+      fontFace: F.heading, fontSize: 12, bold: true, color: C.gold,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(title, {
+      x: x + 0.1, y: 3.2, w: 1.35, h: 0.4,
+      fontFace: F.heading, fontSize: 9.3, bold: true, color: C.white,
+      align: 'center', margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.1, y: 3.75, w: 1.35, h: 2.15,
+      fontFace: F.body, fontSize: 8.35, color: C.textLight,
+      align: 'center', margin: 0,
+    });
   });
-});
+}
 
-
-// =========================================================================
-// SLIDE 21: FUTURE EXPANSION
-// =========================================================================
-const s21 = pptx.addSlide();
-applySlideHeader(s21, 'Product Roadmap', 'Future Expansion Opportunities', 'Strategic enhancements for subsequent version releases (beyond current SRS scope).');
-
-const futureItems = [
-  { icon: '💳', title: 'Payment Gateway Integration', desc: 'Automated UPI, credit card, and net banking payment reconciliation.' },
-  { icon: '🤖', title: 'AI-Assisted Tutor Matching', desc: 'Algorithm-driven matching based on student syllabus, pace, and tutor experience.' },
-  { icon: '📱', title: 'Native Mobile Apps', desc: 'Dedicated iOS & Android applications with native push notifications.' },
-  { icon: '🎥', title: 'Embedded Video Classrooms', desc: 'Integrated WebRTC virtual whiteboards and video sessions for online demos.' },
-  { icon: '📊', title: 'Advanced Learning Analytics', desc: 'Predictive score trendlines, concept gap analysis, and parent insights.' },
-  { icon: '🔔', title: 'Automated SMS & WhatsApp Bots', desc: 'Automated attendance alerts and assignment reminders via WhatsApp Business API.' },
-];
-
-futureItems.forEach((f, idx) => {
-  const col = idx % 3;
-  const row = Math.floor(idx / 3);
-  const x = 0.8 + col * 3.97;
-  const y = 1.9 + row * 2.2;
-
-  s21.addShape(pptx.ShapeType.roundRect, {
-    x, y, w: 3.8, h: 2.0,
-    rectRadius: 0.15,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+// -----------------------------------------------------------------------------
+// 07 — PARENT JOURNEY
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 7, 'User Journey', 'Parent & Student Journey', 'A transparent, stress-free experience from tutor discovery to ongoing progress reporting.');
+  const journey = [
+    ['01', 'Register Account', 'Sign up with verified email and mobile number.'],
+    ['02', 'Add Child Profiles', 'Configure student grade (1–12), board (CBSE/ICSE) and school.'],
+    ['03', 'Post Requirement', 'Specify subjects, locality, budget and preferred schedule.'],
+    ['04', 'Admin Dispatches Lead', 'Requirement is validated and published to verified tutors.'],
+    ['05', 'Candidate Assigned', 'Admin matches the best-suited educator for trial.'],
+    ['06', 'Attend Demo Session', 'Free trial evaluation class conducted online or at home.'],
+    ['07', 'Accept / Reject', 'Parent records binary feedback on the portal.'],
+    ['08', 'Full Access & Tuition', 'Tutor contacts revealed; attendance and reports active.'],
+  ];
+  journey.forEach(([num, title, desc], i) => {
+    const x = 0.8 + (i % 4) * 2.98;
+    const y = 1.9 + Math.floor(i / 4) * 2.15;
+    addCard(slide, x, y, 2.8, 1.95);
+    addNumberBadge(slide, num, x + 0.15, y + 0.15, 0.32);
+    slide.addText(title, {
+      x: x + 0.53, y: y + 0.12, w: 2.12, h: 0.36,
+      fontFace: F.heading, fontSize: 10.3, bold: true, color: C.white, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.15, y: y + 0.58, w: 2.48, h: 1.2,
+      fontFace: F.body, fontSize: 8.85, color: C.textLight, margin: 0,
+    });
   });
-
-  s21.addText(`${f.icon}  ${f.title}`, {
-    x: x + 0.2, y: y + 0.15, w: 3.4, h: 0.4,
-    fontSize: 11, fontFace: FONTS.heading, bold: true, color: C.goldPrimary, valign: 'middle'
+  addCard(slide, 0.8, 6.25, 11.73, 0.55, { fill: C.navyDark, line: C.gold });
+  slide.addText('PRIVACY GUARANTEE: Parents do not receive unrestricted tutor contact coordinates before formal assignment and accepted demo confirmation.', {
+    x: 1.0, y: 6.25, w: 11.33, h: 0.55,
+    fontFace: F.body, fontSize: 9.3, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
   });
+}
 
-  s21.addText(f.desc, {
-    x: x + 0.2, y: y + 0.6, w: 3.4, h: 1.25,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.textLight, valign: 'top'
+// -----------------------------------------------------------------------------
+// 08 — TUTOR JOURNEY AND SUBSCRIPTIONS
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 8, 'Educator Operations', 'Educator Journey & Multi-Tuition Passes', 'Onboarding verified teachers, discovering assignments, and managing multi-tuition tiers.');
+  addCard(slide, 0.8, 1.85, 5.75, 4.85);
+  slide.addText('EDUCATOR ONBOARDING & LIFECYCLE', {
+    x: 1.0, y: 2.05, w: 5.35, h: 0.32,
+    fontFace: F.heading, fontSize: 11.4, bold: true, color: C.gold, margin: 0,
   });
-});
-
-s21.addShape(pptx.ShapeType.roundRect, {
-  x: 0.8, y: 6.35, w: 11.73, h: 0.55,
-  rectRadius: 0.1,
-  fill: { color: C.navyDark },
-  line: { color: C.amberBadge, width: 1 }
-});
-s21.addText('📌 ROADMAP NOTICE: These modules represent potential future growth avenues and are clearly separated from the current SRS product requirements.', {
-  x: 1.0, y: 6.35, w: 11.33, h: 0.55,
-  fontSize: 9.5, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-});
-
-
-// =========================================================================
-// SLIDE 22: FINAL VALUE PROPOSITION
-// =========================================================================
-const s22 = pptx.addSlide();
-s22.background = { color: C.navyDark };
-
-// Centerpiece Gold Border Card
-s22.addShape(pptx.ShapeType.roundRect, {
-  x: 1.5, y: 1.0, w: 10.33, h: 5.4,
-  rectRadius: 0.25,
-  fill: { color: C.navyCore },
-  line: { color: C.goldPrimary, width: 2 }
-});
-
-// Central Logo
-s22.addImage({
-  path: LOGO_PATH,
-  x: 5.66, y: 1.4, w: 2.0, h: 2.0,
-});
-
-s22.addText('SMART MINDS TUITIONS', {
-  x: 2.0, y: 3.55, w: 9.33, h: 0.6,
-  fontSize: 26, fontFace: FONTS.heading, bold: true, color: C.white, align: 'center', valign: 'middle'
-});
-
-s22.addText('"From Finding a Tutor To Managing the Tuition Journey."', {
-  x: 2.0, y: 4.15, w: 9.33, h: 0.5,
-  fontSize: 16, fontFace: FONTS.heading, italic: true, color: C.goldPrimary, align: 'center', valign: 'middle'
-});
-
-s22.addText('A structured, secure platform connecting parents, students, tutors, and coaching centers through controlled verification, matching, and ongoing tuition operations.', {
-  x: 2.5, y: 4.75, w: 8.33, h: 0.8,
-  fontSize: 12, fontFace: FONTS.body, color: C.textLight, align: 'center', valign: 'top'
-});
-
-// 4 Role Badges at bottom
-const pillRoles = ['👨‍👩‍👧 Parents & Students', '🎓 Verified Educators', '🏢 Tuition Centers', '👑 Central Administration'];
-pillRoles.forEach((pr, idx) => {
-  s22.addShape(pptx.ShapeType.roundRect, {
-    x: 2.0 + idx * 2.35, y: 5.65, w: 2.2, h: 0.45,
-    rectRadius: 0.12,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
-  });
-  s22.addText(pr, {
-    x: 2.0 + idx * 2.35, y: 5.65, w: 2.2, h: 0.45,
-    fontSize: 9, fontFace: FONTS.body, bold: true, color: C.goldLight, align: 'center', valign: 'middle'
-  });
-});
-
-
-// =========================================================================
-// SLIDE 23: FINAL CTA / CONTACT
-// =========================================================================
-const s23 = pptx.addSlide();
-s23.background = { color: C.navyDark };
-
-s23.addShape(pptx.ShapeType.roundRect, {
-  x: 1.5, y: 1.0, w: 10.33, h: 5.4,
-  rectRadius: 0.25,
-  fill: { color: C.navyCore },
-  line: { color: C.goldPrimary, width: 1.5 }
-});
-
-s23.addImage({
-  path: LOGO_PATH,
-  x: 2.2, y: 1.8, w: 2.4, h: 2.4,
-});
-
-s23.addText('Let\'s Build a Smarter\nTuition Experience', {
-  x: 5.0, y: 1.6, w: 6.2, h: 1.1,
-  fontSize: 26, fontFace: FONTS.heading, bold: true, color: C.white, valign: 'middle'
-});
-
-s23.addText('One unified, trusted platform for parents, educators, coaching centers, and platform administrators.', {
-  x: 5.0, y: 2.75, w: 6.2, h: 0.6,
-  fontSize: 12, fontFace: FONTS.body, color: C.goldLight, valign: 'top'
-});
-
-// Contact Card Blocks
-const contactCards = [
-  { label: 'PROJECT INQUIRIES', val: '[Client Representative Name]' },
-  { label: 'OFFICIAL EMAIL', val: '[contact@smartmindstuitions.com]' },
-  { label: 'PLATFORM PORTAL', val: '[www.smartmindstuitions.com]' },
-  { label: 'INQUIRY HELPLINE', val: '[Official Phone / WhatsApp Helpline]' }
-];
-
-contactCards.forEach((c, idx) => {
-  const col = idx % 2;
-  const row = Math.floor(idx / 2);
-  const cx = 5.0 + col * 3.1;
-  const cy = 3.5 + row * 1.05;
-
-  s23.addShape(pptx.ShapeType.roundRect, {
-    x: cx, y: cy, w: 2.95, h: 0.9,
-    rectRadius: 0.1,
-    fill: { color: C.navyCard },
-    line: { color: C.navyBorder, width: 1 }
+  slide.addText([
+    '1. Onboarding & KYC: Upload Aadhaar / Passport & Degree Certificates.',
+    '2. Agreement Acceptance: Review and accept tutor code of conduct.',
+    '3. Admin Audit: Admin approves tutor profile after credential verification.',
+    '4. Browse & Apply: Discover nearby student leads filtered by locality.',
+    '5. Conduct Demo: Deliver free trial session and await parent decision.',
+    '6. 50% Commission Desk: Submit first-month commission proof for active classes.',
+    '7. Attendance & Reports: Log class topics, homework, and monthly scores.',
+  ].join('\n\n'), {
+    x: 1.0, y: 2.5, w: 5.35, h: 3.98,
+    fontFace: F.body, fontSize: 8.9, color: C.textLight, margin: 0,
   });
 
-  s23.addText(c.label, {
-    x: cx + 0.15, y: cy + 0.1, w: 2.65, h: 0.25,
-    fontSize: 8, fontFace: FONTS.body, bold: true, color: C.goldPrimary, valign: 'middle'
+  addCard(slide, 6.78, 1.85, 5.75, 4.85, { line: C.gold });
+  slide.addText('MULTI-TUITION SUBSCRIPTION PASSES', {
+    x: 7.0, y: 2.05, w: 5.35, h: 0.32,
+    fontFace: F.heading, fontSize: 11.4, bold: true, color: C.gold, margin: 0,
+  });
+  slide.addText('Tutors taking 2 or more concurrent tuitions require an active subscription tier as mandated by the SRS specification:', {
+    x: 7.0, y: 2.42, w: 5.35, h: 0.42,
+    fontFace: F.body, fontSize: 8.9, color: C.white, margin: 0,
+  });
+  const tiers = [
+    ['3 Months Pass', '₹300', 'Valid for 90 days concurrent lead applications'],
+    ['6 Months Pass', '₹600', 'Valid for 180 days concurrent lead applications'],
+    ['9 Months Pass', '₹900', 'Valid for 270 days concurrent lead applications'],
+    ['12 Months Pass', '₹1200', 'Annual pass for unlimited concurrent tuition applications'],
+  ];
+  tiers.forEach(([term, fee, desc], i) => {
+    const y = 2.96 + i * 0.87;
+    addCard(slide, 7.0, y, 5.31, 0.75, { fill: C.navyDark });
+    slide.addText(term, {
+      x: 7.15, y: y + 0.1, w: 2.85, h: 0.27,
+      fontFace: F.heading, fontSize: 9.7, bold: true, color: C.goldLight, margin: 0,
+    });
+    slide.addText(fee, {
+      x: 10.75, y: y + 0.1, w: 1.4, h: 0.27,
+      fontFace: F.heading, fontSize: 10.8, bold: true, color: C.green,
+      align: 'right', margin: 0,
+    });
+    slide.addText(desc, {
+      x: 7.15, y: y + 0.4, w: 4.95, h: 0.24,
+      fontFace: F.body, fontSize: 8.25, color: C.textLight, margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 09 — TUITION CENTER MANAGEMENT
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 9, 'Institutional Module', 'Dedicated Tuition Center Management', 'An enterprise portal enabling coaching centers to automate Classes 1–10 batches, attendance and fees.');
+  const modules = [
+    ['Classes 1–10 Batch Architecture', 'Create academic batches by grade, assign subject faculty, configure timings, and enforce capacity limits.'],
+    ['Student Roster Management', 'Enroll students, assign them to batches, track guardian contacts, and monitor active or inactive status.'],
+    ['Daily Batch Attendance Registers', 'Record Present, Absent, and Late statuses across all enrolled batch students with historical logs.'],
+    ['Unit Test & Exam Performance', 'Record periodic marks, calculate subject averages, track ranks, and generate parent-facing report cards.'],
+    ['Monthly Fee Collection Ledger', 'Track Paid versus Pending status per student with payment method, transaction ID, and dates.'],
+    ['1-Click WhatsApp Fee Reminders', 'Trigger pre-formatted WhatsApp payment reminders directly to parent mobile numbers.'],
+  ];
+  modules.forEach(([title, desc], i) => {
+    const x = 0.8 + (i % 3) * 3.98;
+    const y = 1.9 + Math.floor(i / 3) * 2.15;
+    addCard(slide, x, y, 3.78, 1.95);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.16, w: 3.38, h: 0.35,
+      fontFace: F.heading, fontSize: 10.4, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.57, w: 3.38, h: 1.2,
+      fontFace: F.body, fontSize: 8.85, color: C.textLight, margin: 0,
+    });
+  });
+  addCard(slide, 0.8, 6.25, 11.73, 0.55, { fill: C.navyDark, line: C.purple });
+  slide.addText('FACULTY RECRUITMENT DESK: Tuition centers can submit formal requests to Admin for qualified subject tutors and specialized educators from the verified tutor pool.', {
+    x: 1.0, y: 6.25, w: 11.33, h: 0.55,
+    fontFace: F.body, fontSize: 9, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 10 — ADMIN CONTROL CENTER
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 10, 'Platform Governance', 'Centralized Admin Control Center', 'The single operational authority for verification, matching, assignments, and platform earnings.');
+  const desks = [
+    ['Executive KPI Dashboard', 'Global platform metrics: requirements, active tuitions, verified tutors, and centers.'],
+    ['Educator KYC Audit Desk', 'Review government ID cards and degree memos; approve or reject with recorded feedback.'],
+    ['Center Accreditation Desk', 'Audit institutional registration certificates, trade licenses, and director credentials.'],
+    ['Lead Matching & Dispatch', 'Review incoming parent requirements and audit tutor applications before selection.'],
+    ['Demo Coordination Console', 'Schedule evaluation demos and relay parent confirmation decisions to educators.'],
+    ['50% Commission Desk', 'Audit tutor UPI screenshots; approval unlocks mutual contact details.'],
+    ['Subscription Approval Desk', 'Verify 3, 6, 9, 12-month pass payments and activate access.'],
+    ['Financial Intelligence Ledger', 'Unified ledger tracking platform revenue streams with receipt verification.'],
+    ['Multi-Channel Support Chat', 'Real-time WebSocket messaging hub communicating with all four platform roles.'],
+    ['Security Audit Trail', 'Immutable log of administrative actions, KYC decisions, and financial events.'],
+  ];
+  desks.forEach(([title, desc], i) => {
+    const x = 0.8 + (i % 2) * 5.98;
+    const y = 1.9 + Math.floor(i / 2) * 0.96;
+    addCard(slide, x, y, 5.75, 0.84);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.08, w: 5.35, h: 0.27,
+      fontFace: F.heading, fontSize: 9.9, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.38, w: 5.35, h: 0.36,
+      fontFace: F.body, fontSize: 8.35, color: C.textLight, margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 11 — TRUST AND SECURITY
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 11, 'Security Framework', 'Built Around Trust & Controlled Access', 'Rigorous data privacy, credential verification, and role-based access boundaries.');
+  const pillars = [
+    ['KYC Document Verification', 'Government ID proofs (Aadhaar / Passport) and degree memos are verified by Admin before tutors can apply.'],
+    ['Mutual Contact Redaction', 'Phone numbers, emails, and home addresses stay hidden until demo acceptance and commission verification.'],
+    ['Role-Based Access Control', 'JWT authentication and authorization middleware isolate Parent, Tutor, Center, and Admin portals.'],
+    ['Protected Document Storage', 'Sensitive KYC documents and transaction screenshots are accessible only via authenticated routes.'],
+    ['Password Security Standards', 'Credentials are protected using salted BCrypt password hashing during authentication.'],
+    ['Immutable Audit Logging', 'Administrative decisions, KYC approvals, status updates, and financial events are timestamped and logged.'],
+  ];
+  pillars.forEach(([title, desc], i) => {
+    const x = 0.8 + (i % 3) * 3.98;
+    const y = 1.9 + Math.floor(i / 3) * 2.45;
+    addCard(slide, x, y, 3.78, 2.25);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.18, w: 3.38, h: 0.35,
+      fontFace: F.heading, fontSize: 10.8, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.64, w: 3.38, h: 1.4,
+      fontFace: F.body, fontSize: 9.2, color: C.textLight, margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 12 — PAYMENT AND COMMISSION
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 12, 'Financial Governance', 'Simple, Transparent Payment Verification', 'Controlled manual UPI verification workflows for tutor subscriptions and first-month commissions.');
+  addCard(slide, 0.8, 1.85, 5.75, 4.15);
+  slide.addText('TUTOR MULTI-TUITION SUBSCRIPTION', {
+    x: 1.0, y: 2.05, w: 5.35, h: 0.32,
+    fontFace: F.heading, fontSize: 11.3, bold: true, color: C.gold, margin: 0,
+  });
+  slide.addText([
+    '1. Plan Selection: Tutor selects 3, 6, 9, or 12-month pass (₹300 – ₹1200).',
+    '2. External Payment: Makes external UPI payment to Admin QR code.',
+    '3. Proof Upload: Submits UTR and payment screenshot.',
+    '4. Admin Verification: Admin verifies receipt on Subscription Desk.',
+    '5. Activation: Subscription pass is activated for multi-tuition applications.',
+  ].join('\n\n'), {
+    x: 1.0, y: 2.5, w: 5.35, h: 3.2,
+    fontFace: F.body, fontSize: 9.3, color: C.textLight, margin: 0,
   });
 
-  s23.addText(c.val, {
-    x: cx + 0.15, y: cy + 0.38, w: 2.65, h: 0.45,
-    fontSize: 9.5, fontFace: FONTS.body, color: C.white, valign: 'top'
+  addCard(slide, 6.78, 1.85, 5.75, 4.15);
+  slide.addText('50% FIRST-MONTH COMMISSION WORKFLOW', {
+    x: 7.0, y: 2.05, w: 5.35, h: 0.32,
+    fontFace: F.heading, fontSize: 11.3, bold: true, color: C.gold, margin: 0,
   });
-});
+  slide.addText([
+    '1. Demo Accepted: Parent marks the assignment Accepted.',
+    '2. Direct Payment: Tutor receives first-month tuition fee from parent.',
+    '3. 50% Commission: Tutor pays the one-time commission via UPI.',
+    '4. Proof Submission: Tutor uploads payment proof and UTR number.',
+    '5. Assignment Active: Admin approves; mutual contacts are unlocked.',
+  ].join('\n\n'), {
+    x: 7.0, y: 2.5, w: 5.35, h: 3.2,
+    fontFace: F.body, fontSize: 9.3, color: C.textLight, margin: 0,
+  });
+  addCard(slide, 0.8, 6.18, 11.73, 0.62, { fill: C.navyDark, line: C.gold });
+  slide.addText('IMPORTANT FINANCIAL CLARIFICATION: Regular monthly tuition fee payments between parents and tutors take place outside the platform. The platform manages only tutor subscriptions and first-month commissions.', {
+    x: 1.0, y: 6.18, w: 11.33, h: 0.62,
+    fontFace: F.body, fontSize: 8.9, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
+  });
+}
 
-s23.addText('Smart Minds Tuitions  •  All Rights Reserved  •  Confidential Client Presentation', {
-  x: 1.5, y: 6.6, w: 10.33, h: 0.3,
-  fontSize: 9.5, fontFace: FONTS.body, color: C.textMuted, align: 'center', valign: 'middle'
-});
+// -----------------------------------------------------------------------------
+// 13 — COMMUNICATION CHANNELS
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 13, 'Communication Hub', 'Centralized Communication Channels', 'Two clearly separated communication mediums designed for authenticated users and public inquiries.');
+  addCard(slide, 0.8, 1.9, 5.75, 4.85, { line: C.gold });
+  slide.addText('CHANNEL 1: REAL-TIME IN-APP CHAT', {
+    x: 1.05, y: 2.15, w: 5.25, h: 0.35,
+    fontFace: F.heading, fontSize: 11.7, bold: true, color: C.gold, margin: 0,
+  });
+  slide.addText('• Purpose: Secure, authenticated operational messaging.\n• Technology: Socket.IO WebSockets with JWT handshake verification.\n• Direct Support Channels:\n   – Parent ↔ Admin (Academic counseling and demo feedback)\n   – Tutor ↔ Admin (Lead clarification and commission support)\n   – Tuition Center ↔ Admin (Faculty requests and accreditation)\n• Features: Instant delivery, unread badges, typing indicators, and message history.', {
+    x: 1.05, y: 2.68, w: 5.25, h: 3.75,
+    fontFace: F.body, fontSize: 9.7, color: C.textLight, margin: 0,
+  });
+  addCard(slide, 6.78, 1.9, 5.75, 4.85, { line: C.green });
+  slide.addText('CHANNEL 2: PUBLIC WHATSAPP INQUIRY', {
+    x: 7.05, y: 2.15, w: 5.25, h: 0.35,
+    fontFace: F.heading, fontSize: 11.7, bold: true, color: C.green, margin: 0,
+  });
+  slide.addText('• Purpose: Pre-registration public inquiries and prospective support.\n• Integration: Floating WhatsApp badge on public marketing pages.\n• User Flow:\n   – Prospective parents and tutors click the WhatsApp badge.\n   – Redirects to WhatsApp with a pre-formatted inquiry template.\n   – Connects to the Smart Minds Tuitions official admin desk.\n• Distinction: WhatsApp and In-App Chat remain separate communication channels.', {
+    x: 7.05, y: 2.68, w: 5.25, h: 3.75,
+    fontFace: F.body, fontSize: 9.7, color: C.textLight, margin: 0,
+  });
+}
 
-// --- SAVE PRESENTATION ---
-const OUTPUT_FILE = path.resolve(__dirname, 'Smart_Minds_Tuitions_Presentation.pptx');
+// -----------------------------------------------------------------------------
+// 14 — TECHNOLOGY ARCHITECTURE
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 14, 'System Engineering', 'Technology Architecture', 'A modern, modular full-stack stack engineered for reliability, responsiveness, and zero-setup deployment.');
+  const layers = [
+    ['FRONTEND CLIENT', 'React 18 + Vite + Tailwind CSS', 'Single-page application, Lucide icons, responsive layout, and role-based portal routing.'],
+    ['BACKEND API SERVER', 'Node.js + Express.js REST API', 'Modular controllers, RBAC middleware, privacy redaction, and protected document routes.'],
+    ['REAL-TIME WEBSOCKETS', 'Socket.IO (v4)', 'Authenticated event gateway for live support messaging, typing indicators, and notifications.'],
+    ['DATABASE & DUAL ENGINE', 'MongoDB + In-Memory Fallback', 'Mongoose schemas with automatic zero-config in-memory MongoDB failover for rapid development.'],
+    ['SECURITY & ENCRYPTION', 'JWT + BCrypt + Helmet', 'Cryptographic authentication, salted password hashing, NoSQL sanitization, and rate limiting.'],
+  ];
+  layers.forEach(([label, tech, desc], i) => {
+    const y = 1.85 + i * 0.98;
+    addCard(slide, 0.8, y, 11.73, 0.85);
+    addCard(slide, 1.0, y + 0.15, 2.5, 0.55, { fill: C.navyDark, line: C.gold });
+    slide.addText(label, {
+      x: 1.0, y: y + 0.15, w: 2.5, h: 0.55,
+      fontFace: F.body, fontSize: 8.8, bold: true, color: C.goldLight,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(tech, {
+      x: 3.7, y: y + 0.12, w: 4.2, h: 0.32,
+      fontFace: F.heading, fontSize: 11.3, bold: true, color: C.white, margin: 0,
+    });
+    slide.addText(desc, {
+      x: 3.7, y: y + 0.44, w: 8.5, h: 0.3,
+      fontFace: F.body, fontSize: 8.8, color: C.textLight, margin: 0,
+    });
+  });
+}
 
-pptx.writeFile({ fileName: OUTPUT_FILE })
-  .then(fileName => {
-    console.log(`[PPTX] Success! Presentation saved to: ${fileName}`);
-  })
-  .catch(err => {
-    console.error('[PPTX] Error writing presentation:', err);
+// -----------------------------------------------------------------------------
+// 15 — SYSTEM TOPOLOGY
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 15, 'Ecosystem Topology', 'Platform Ecosystem & Security Architecture', 'High-level topology showing authenticated role interfaces and backend service modules.');
+  addCard(slide, 0.8, 1.85, 11.73, 4.9, { fill: C.navyDark });
+  const portals = [
+    ['Parent / Student Portal', 'Protected Route: /parent/*', C.blue, 1.2],
+    ['Educator / Tutor Portal', 'Protected Route: /tutor/*', C.green, 4.9],
+    ['Tuition Center Desk', 'Protected Route: /center/*', C.purple, 8.6],
+  ];
+  portals.forEach(([title, route, col, x]) => {
+    addCard(slide, x, 2.1, 3.4, 0.9, { line: col });
+    slide.addText(title, {
+      x, y: 2.15, w: 3.4, h: 0.32,
+      fontFace: F.heading, fontSize: 10.3, bold: true, color: C.white,
+      align: 'center', margin: 0,
+    });
+    slide.addText(route, {
+      x, y: 2.52, w: 3.4, h: 0.28,
+      fontFace: F.body, fontSize: 8.5, color: C.goldLight,
+      align: 'center', margin: 0,
+    });
+  });
+  addCard(slide, 2.8, 3.3, 7.73, 1.45, { line: C.gold, lineWidth: 1.5 });
+  slide.addText('CENTRAL ADMIN GATEWAY & REST API CONTROLLERS', {
+    x: 3.0, y: 3.43, w: 7.33, h: 0.32,
+    fontFace: F.heading, fontSize: 10.8, bold: true, color: C.gold,
+    align: 'center', margin: 0,
+  });
+  slide.addText('• KYC Document Audit\n• Lead Dispatch & Matching\n• Demo Coordination', {
+    x: 3.2, y: 3.85, w: 3.4, h: 0.8,
+    fontFace: F.body, fontSize: 8.8, color: C.textLight, margin: 0,
+  });
+  slide.addText('• 50% Commission Desk\n• Subscription Pass Manager\n• Socket.IO Live Chat Server', {
+    x: 6.8, y: 3.85, w: 3.4, h: 0.8,
+    fontFace: F.body, fontSize: 8.8, color: C.textLight, margin: 0,
+  });
+  addCard(slide, 2.8, 5.05, 7.73, 1.4);
+  slide.addText('MONGODB DATABASE & PROTECTED STORAGE LAYER', {
+    x: 3.0, y: 5.15, w: 7.33, h: 0.32,
+    fontFace: F.heading, fontSize: 10.4, bold: true, color: C.white,
+    align: 'center', margin: 0,
+  });
+  slide.addText('Collections: Users • Profiles • TuitionRequirements • Applications • Demos • Assignments • Attendance • MonthlyReports • Batches • FeeLedgers • Subscriptions • AuditLogs', {
+    x: 3.1, y: 5.55, w: 7.13, h: 0.72,
+    fontFace: F.body, fontSize: 8.4, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 16 — CAPABILITIES GRID
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 16, 'Feature Matrix', 'Core Platform Capabilities', '16 core functional capabilities engineered to meet the complete SRS specification.');
+  const caps = ['Tutor KYC Verification', 'Parent Registration', 'Tuition Requirements', 'Tutor Applications', 'Admin Lead Matching', 'Evaluation Demo Classes', 'Tutor Assignments', 'Lesson Attendance Ledger', 'Monthly Progress Reports', 'Tuition Center Batches', 'Multi-Tuition Passes', '50% Commission Desk', 'Real-Time Admin Chat', 'WhatsApp Reminder Triggers', 'Role-Based Access Control', 'Protected Document Desk'];
+  caps.forEach((title, i) => {
+    const x = 0.8 + (i % 4) * 2.98;
+    const y = 1.9 + Math.floor(i / 4) * 1.2;
+    addCard(slide, x, y, 2.8, 1.05);
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: x + 0.15, y: y + 0.32, w: 0.4, h: 0.4, rectRadius: 0.06,
+      fill: { color: C.green }, line: { color: C.green, width: 0.5 },
+    });
+    slide.addText('✓', {
+      x: x + 0.15, y: y + 0.32, w: 0.4, h: 0.4,
+      fontFace: F.body, fontSize: 11, bold: true, color: C.white,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+    slide.addText(title, {
+      x: x + 0.65, y: y + 0.15, w: 2.02, h: 0.75,
+      fontFace: F.heading, fontSize: 9.8, bold: true, color: C.white,
+      valign: 'middle', margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 17 — PERSONA DASHBOARDS
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 17, 'Interface Experience', 'Designed per User Persona', 'Contextual dashboards crafted specifically for parents, educators, center directors, and administrators.');
+  const personas = [
+    ['PARENT DASHBOARD', ['Active Requirements', 'Scheduled Demo Sessions', 'Assigned Tutors', 'Monthly Report Cards']],
+    ['EDUCATOR DASHBOARD', ['Nearby Student Leads', 'Submitted Applications', 'Active Tuitions', 'Monthly Attendance Logs']],
+    ['TUITION CENTER DESK', ['Class 1–10 Batches', 'Enrolled Student Rosters', 'Daily Attendance Marked', 'Monthly Fee Dues Ledger']],
+    ['ADMIN CONTROL ROOM', ['Pending Tutor KYC Audits', '50% Commission Proofs', 'Multi-Tuition Passes', 'Live Support Conversations']],
+  ];
+  personas.forEach(([role, metrics], i) => {
+    const x = 0.8 + (i % 2) * 5.98;
+    const y = 1.9 + Math.floor(i / 2) * 2.45;
+    addCard(slide, x, y, 5.75, 2.25);
+    slide.addText(role, {
+      x: x + 0.2, y: y + 0.15, w: 5.35, h: 0.32,
+      fontFace: F.heading, fontSize: 11, bold: true, color: C.gold, margin: 0,
+    });
+    metrics.forEach((metric, j) => {
+      const mx = x + 0.2 + (j % 2) * 2.72;
+      const my = y + 0.58 + Math.floor(j / 2) * 0.76;
+      addCard(slide, mx, my, 2.62, 0.65, { fill: C.navyDark });
+      slide.addText(metric, {
+        x: mx + 0.1, y: my + 0.08, w: 2.42, h: 0.5,
+        fontFace: F.body, fontSize: 8.8, color: C.textLight,
+        align: 'center', valign: 'middle', margin: 0,
+      });
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 18 — RESPONSIVE ACCESS
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 18, 'Accessibility', 'Accessible Across Devices', 'A responsive web application accessible across desktop monitors, laptops, tablets, and smartphones.');
+  const devices = [
+    ['Desktop & Laptops', 'Optimized for high-productivity workflows: Admin control room, center batch registers, multi-column lead browsing, and attendance tables.'],
+    ['Tablets & iPads', 'Fluid touch navigation for parents reviewing tutor credentials, checking demo dates, and approving monthly reports.'],
+    ['Mobile Browsers', 'Instant access on iOS and Android browsers for tutors marking attendance on-the-go and parents receiving reminders.'],
+  ];
+  devices.forEach(([title, desc], i) => {
+    const x = 0.8 + i * 3.98;
+    addCard(slide, x, 1.9, 3.78, 3.95);
+    slide.addText(title, {
+      x: x + 0.2, y: 2.25, w: 3.38, h: 0.38,
+      fontFace: F.heading, fontSize: 12.3, bold: true, color: C.gold,
+      align: 'center', margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.3, y: 2.9, w: 3.18, h: 2.35,
+      fontFace: F.body, fontSize: 9.8, color: C.textLight,
+      align: 'center', margin: 0,
+    });
+  });
+  addCard(slide, 0.8, 6.1, 11.73, 0.7, { fill: C.navyDark, line: C.gold });
+  slide.addText('ZERO INSTALLATION FRICTION: Built as a modern Single Page Web Application, users require no app store downloads and can log in securely from any standard browser.', {
+    x: 1.0, y: 6.1, w: 11.33, h: 0.7,
+    fontFace: F.body, fontSize: 9.3, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 19 — STAKEHOLDER VALUE
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 19, 'Strategic Impact', 'Value Delivered Across All Stakeholders', 'Delivering safety, operational efficiency, and revenue transparency to every user persona.');
+  const values = [
+    ['PARENTS & STUDENTS', ['Verified educators with audited IDs and degrees', 'Zero upfront contact leakage or spam', 'Free evaluation demo before commitment', 'Continuous monthly progress and attendance logs']],
+    ['QUALIFIED TUTORS', ['Genuine nearby tuition lead discovery', 'Professional credential verification badges', 'Multi-tuition subscription passes for scale', 'Transparent 50% commission verification desk']],
+    ['TUITION CENTERS', ['Classes 1–10 batch configuration and caps', 'Paperless attendance and test ledgers', '1-Click WhatsApp payment reminders', 'Faculty hiring from the verified pool']],
+    ['PLATFORM OWNERS', ['Total administrative control over matching', 'Multi-stream revenue (commissions + subscriptions)', 'Immutable security and financial audit trail', 'Integrated real-time support chat desk']],
+  ];
+  values.forEach(([title, items], i) => {
+    const x = 0.8 + (i % 2) * 5.98;
+    const y = 1.9 + Math.floor(i / 2) * 2.45;
+    addCard(slide, x, y, 5.75, 2.25);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.15, w: 5.35, h: 0.32,
+      fontFace: F.heading, fontSize: 11, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(items.map(item => `✓  ${item}`).join('\n'), {
+      x: x + 0.2, y: y + 0.55, w: 5.35, h: 1.5,
+      fontFace: F.body, fontSize: 9, color: C.textLight, margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 20 — CURRENT PRODUCT SCOPE
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 20, 'Deliverables Inventory', 'Current Product Scope', 'A comprehensive inventory of fully engineered and verified deliverables based on the SRS.');
+  const groups = [
+    ['FRONTEND MODULES', ['Parent & Student Portal (8 Pages)', 'Educator & Tutor Portal (11 Pages)', 'Tuition Center Desk (8 Pages)', 'Super Admin Control Room (10 Pages)', 'Marketing Pages & 1-Click Login']],
+    ['BACKEND SERVICES', ['JWT Auth & RBAC Middleware', 'Contact Privacy Redaction Pipeline', 'Protected Document Storage Desk', 'Dual Engine (MongoDB + Memory Failover)', 'Socket.IO Real-Time Chat Server']],
+    ['BUSINESS WORKFLOWS', ['Tutor KYC Aadhaar/Degree Audit', 'Lead Posting & Tutor Applications', 'Evaluation Demo Class Lifecycle', '50% First-Month Commission Desk', '3/6/9/12-Month Subscription Passes']],
+    ['INSTITUTIONAL TOOLS', ['Classes 1–10 Batch Management', 'Daily Student Attendance Registers', 'Unit Test & Exam Score Ledgers', 'Monthly Fee Collection Tracking', '1-Click WhatsApp Parent Reminders']],
+  ];
+  groups.forEach(([title, items], i) => {
+    const x = 0.8 + (i % 2) * 5.98;
+    const y = 1.9 + Math.floor(i / 2) * 2.45;
+    addCard(slide, x, y, 5.75, 2.25);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.15, w: 5.35, h: 0.32,
+      fontFace: F.heading, fontSize: 11, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(items.map(item => `• ${item}`).join('\n'), {
+      x: x + 0.2, y: y + 0.55, w: 5.35, h: 1.5,
+      fontFace: F.body, fontSize: 9, color: C.textLight, margin: 0,
+    });
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 21 — ROADMAP
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  addMaster(slide, 21, 'Product Roadmap', 'Future Expansion Opportunities', 'Strategic enhancements for subsequent version releases beyond current SRS scope.');
+  const roadmap = [
+    ['Payment Gateway Integration', 'Automated UPI, credit card, and net banking payment reconciliation.'],
+    ['AI-Assisted Tutor Matching', 'Algorithm-driven matching based on syllabus, pace, and tutor experience.'],
+    ['Native Mobile Applications', 'Dedicated iOS and Android applications with native push notifications.'],
+    ['Embedded Video Classrooms', 'Integrated WebRTC whiteboards and video sessions for online demos.'],
+    ['Advanced Learning Analytics', 'Predictive score trendlines, concept gap analysis, and parent insights.'],
+    ['Automated WhatsApp Bots', 'Attendance alerts and assignment reminders via WhatsApp Business API.'],
+  ];
+  roadmap.forEach(([title, desc], i) => {
+    const x = 0.8 + (i % 3) * 3.98;
+    const y = 1.9 + Math.floor(i / 3) * 2.15;
+    addCard(slide, x, y, 3.78, 1.95);
+    slide.addText(title, {
+      x: x + 0.2, y: y + 0.16, w: 3.38, h: 0.35,
+      fontFace: F.heading, fontSize: 10.4, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(desc, {
+      x: x + 0.2, y: y + 0.58, w: 3.38, h: 1.15,
+      fontFace: F.body, fontSize: 8.9, color: C.textLight, margin: 0,
+    });
+  });
+  addCard(slide, 0.8, 6.25, 11.73, 0.55, { fill: C.navyDark, line: C.amber });
+  slide.addText('ROADMAP NOTICE: These modules represent potential future growth avenues and are clearly separated from the current SRS product requirements.', {
+    x: 1.0, y: 6.25, w: 11.33, h: 0.55,
+    fontFace: F.body, fontSize: 9, bold: true, color: C.goldLight,
+    align: 'center', valign: 'middle', margin: 0,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// 22 — VALUE PROPOSITION
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  slide.background = { color: C.navyDark };
+  addCard(slide, 1.2, 0.8, 10.93, 5.8, { fill: C.navyBase, line: C.gold, lineWidth: 2, radius: 0.18 });
+  slide.addImage({ path: LOGO, x: 5.76, y: 1.2, w: 1.8, h: 1.8 });
+  slide.addText('SMART MINDS TUITIONS', {
+    x: 1.8, y: 3.2, w: 9.73, h: 0.58,
+    fontFace: F.heading, fontSize: 26, bold: true, color: C.white,
+    align: 'center', margin: 0,
+  });
+  slide.addText('"From Finding a Tutor To Managing the Tuition Journey."', {
+    x: 1.8, y: 3.83, w: 9.73, h: 0.42,
+    fontFace: F.heading, fontSize: 15, italic: true, color: C.gold,
+    align: 'center', margin: 0,
+  });
+  slide.addText('A structured, secure platform connecting parents, students, tutors, and coaching centers through controlled verification, matching, and ongoing tuition operations.', {
+    x: 2.2, y: 4.4, w: 8.93, h: 0.72,
+    fontFace: F.body, fontSize: 11.4, color: C.textLight,
+    align: 'center', margin: 0,
+  });
+  ['Parents & Students', 'Verified Educators', 'Tuition Centers', 'Central Administration'].forEach((label, i) => {
+    const x = 1.8 + i * 2.45;
+    addCard(slide, x, 5.4, 2.3, 0.42, { fill: C.navyCard });
+    slide.addText(label, {
+      x, y: 5.4, w: 2.3, h: 0.42,
+      fontFace: F.body, fontSize: 8.8, bold: true, color: C.goldLight,
+      align: 'center', valign: 'middle', margin: 0,
+    });
+  });
+  addFooterOnly(slide, 22);
+}
+
+// -----------------------------------------------------------------------------
+// 23 — FINAL CTA
+// -----------------------------------------------------------------------------
+{
+  const slide = pptx.addSlide();
+  slide.background = { color: C.navyDark };
+  addCard(slide, 1.2, 0.8, 10.93, 5.8, { fill: C.navyBase, line: C.gold, lineWidth: 1.5, radius: 0.18 });
+  slide.addImage({ path: LOGO, x: 1.8, y: 1.8, w: 2.4, h: 2.4 });
+  slide.addText("Let's Build a Smarter\nTuition Experience", {
+    x: 4.6, y: 1.5, w: 6.8, h: 1.08,
+    fontFace: F.heading, fontSize: 26, bold: true,
+    color: C.white, margin: 0, valign: 'middle',
+  });
+  slide.addText('One unified, trusted platform for parents, educators, coaching centers, and platform administrators.', {
+    x: 4.6, y: 2.65, w: 6.8, h: 0.48,
+    fontFace: F.body, fontSize: 11.4, color: C.goldLight, margin: 0,
+  });
+  const contact = [
+    ['PROJECT INQUIRIES', '[Client Representative Name]'],
+    ['OFFICIAL EMAIL', '[contact@smartmindstuitions.com]'],
+    ['PLATFORM PORTAL', '[www.smartmindstuitions.com]'],
+    ['INQUIRY HELPLINE', '[Official Phone / WhatsApp Helpline]'],
+  ];
+  contact.forEach(([label, value], i) => {
+    const x = 4.6 + (i % 2) * 3.45;
+    const y = 3.35 + Math.floor(i / 2) * 1.1;
+    addCard(slide, x, y, 3.3, 0.95);
+    slide.addText(label, {
+      x: x + 0.15, y: y + 0.12, w: 3.0, h: 0.24,
+      fontFace: F.body, fontSize: 7.8, bold: true, color: C.gold, margin: 0,
+    });
+    slide.addText(value, {
+      x: x + 0.15, y: y + 0.42, w: 3.0, h: 0.4,
+      fontFace: F.body, fontSize: 9.2, color: C.white, margin: 0,
+    });
+  });
+  addFooterOnly(slide, 23);
+}
+
+pptx.writeFile({ fileName: OUT })
+  .then(fileName => console.log(`[PPTX Audit Complete] Polished presentation saved to: ${fileName}`))
+  .catch(error => {
+    console.error('[PPTX Audit Error]', error);
+    process.exitCode = 1;
   });
