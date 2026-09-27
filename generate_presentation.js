@@ -44,14 +44,21 @@ const F = {
 };
 
 const LOGO = path.resolve(__dirname, 'image', 'logo.png');
-const OUT = path.resolve(__dirname, 'Smart_Minds_Tuitions_Presentation_Polished.pptx');
+const OUT = path.resolve(__dirname, 'Smart_Minds_Tuitions_Presentation_BoundarySafe.pptx');
+
+// Strict 16:9 slide geometry. All non-background objects must remain inside
+// both the canvas and this conservative safe area.
+const SLIDE = { width: 13.333, height: 7.5 };
+const SAFE = { left: 0.6, top: 0.35, right: 12.733, bottom: 7.05 };
 
 const GRID = {
   left: 0.8,
   right: 12.53,
   width: 11.73,
   top: 1.85,
-  footerLine: 6.95,
+  footerLine: 6.68,
+  footerY: 6.77,
+  footerHeight: 0.22,
 };
 
 function addMaster(slide, number, category, title, subtitle) {
@@ -88,12 +95,12 @@ function addMaster(slide, number, category, title, subtitle) {
     line: { color: C.navyBorder, width: 1 },
   });
   slide.addText('SMART MINDS TUITIONS  •  Client Project Presentation  •  Confidential', {
-    x: GRID.left, y: 7.02, w: 7.8, h: 0.25,
+    x: GRID.left, y: GRID.footerY, w: 7.8, h: GRID.footerHeight,
     fontFace: F.body, fontSize: 8.5, color: C.textMuted,
     margin: 0, valign: 'middle',
   });
   slide.addText(`Slide ${String(number).padStart(2, '0')} of 23`, {
-    x: 10.35, y: 7.02, w: 2.18, h: 0.25,
+    x: 10.35, y: GRID.footerY, w: 2.18, h: GRID.footerHeight,
     fontFace: F.body, fontSize: 8.5, color: C.goldMuted,
     margin: 0, align: 'right', valign: 'middle',
   });
@@ -131,17 +138,64 @@ function addNumberBadge(slide, number, x, y, size = 0.34) {
   });
 }
 
+function objectBounds(object) {
+  const options = object.options || (object.text && object.text[0] && object.text[0].options) || {};
+  const x = Number(options.x);
+  const y = Number(options.y);
+  const w = Number(options.w);
+  const h = Number(options.h);
+  if (![x, y, w, h].every(Number.isFinite)) return null;
+  return { x, y, w, h, right: x + w, bottom: y + h };
+}
+
+function auditSlideBounds(slide, slideNumber) {
+  const violations = [];
+  (slide._slideObjects || []).forEach((object, objectIndex) => {
+    const bounds = objectBounds(object);
+    if (!bounds) return;
+    const isBackground = object._isBackground === true || object.options?.isBackground === true;
+    const canvasViolation = !isBackground && (
+      bounds.x < 0 || bounds.y < 0 || bounds.right > SLIDE.width || bounds.bottom > SLIDE.height
+    );
+    const safeViolation = !isBackground && (
+      bounds.x < SAFE.left || bounds.y < SAFE.top ||
+      bounds.right > SAFE.right || bounds.bottom > SAFE.bottom
+    );
+    if (canvasViolation || safeViolation) {
+      violations.push({
+        slide: slideNumber,
+        object: object.options?.objectName || `${object._type || 'object'}-${objectIndex + 1}`,
+        type: object._type || 'unknown',
+        bounds,
+        canvasViolation,
+        safeViolation,
+      });
+    }
+  });
+  return violations;
+}
+
+function auditAllSlides() {
+  const violations = pptx._slides.flatMap((slide, index) => auditSlideBounds(slide, index + 1));
+  if (violations.length) {
+    console.error(`[PPTX Boundary Audit] FAILED: ${violations.length} object violation(s).`);
+    violations.forEach(v => console.error(JSON.stringify(v)));
+    throw new Error('Boundary audit failed; presentation was not exported.');
+  }
+  console.log(`[PPTX Boundary Audit] PASSED: ${pptx._slides.length} slides, zero canvas/safe-area violations.`);
+}
+
 function addFooterOnly(slide, number) {
   slide.addShape(pptx.ShapeType.line, {
     x: GRID.left, y: GRID.footerLine, w: GRID.width, h: 0,
     line: { color: C.navyBorder, width: 1 },
   });
   slide.addText('SMART MINDS TUITIONS  •  Client Project Presentation  •  Confidential', {
-    x: GRID.left, y: 7.02, w: 7.8, h: 0.25,
+    x: GRID.left, y: GRID.footerY, w: 7.8, h: GRID.footerHeight,
     fontFace: F.body, fontSize: 8.5, color: C.textMuted, margin: 0,
   });
   slide.addText(`Slide ${String(number).padStart(2, '0')} of 23`, {
-    x: 10.35, y: 7.02, w: 2.18, h: 0.25,
+    x: 10.35, y: GRID.footerY, w: 2.18, h: GRID.footerHeight,
     fontFace: F.body, fontSize: 8.5, color: C.goldMuted,
     margin: 0, align: 'right',
   });
@@ -202,7 +256,7 @@ function addFooterOnly(slide, number) {
     });
   });
   slide.addText('Platform Architecture & Technical Specification Overview  •  Client Ready Presentation', {
-    x: 0.8, y: 6.98, w: 11.73, h: 0.25,
+    x: 0.8, y: 6.77, w: 11.73, h: 0.25,
     fontFace: F.body, fontSize: 8.5, color: C.textMuted,
     align: 'center', margin: 0,
   });
@@ -1020,6 +1074,8 @@ function addFooterOnly(slide, number) {
   });
   addFooterOnly(slide, 23);
 }
+
+auditAllSlides();
 
 pptx.writeFile({ fileName: OUT })
   .then(fileName => console.log(`[PPTX Audit Complete] Polished presentation saved to: ${fileName}`))
