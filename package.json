@@ -18,5 +18,8 @@
     "smart-minds-tuitions"
   ],
   "author": "Smart Minds Tuitions",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
 }
